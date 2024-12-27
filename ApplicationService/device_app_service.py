@@ -1,6 +1,6 @@
-from .dto_device import Device, DeviceList
 from Domain.device_repository import IDeviceReopsitory
 from Domain.device import Device
+from .dto_device import DeviceList
 from typing import Tuple
 
 
