@@ -12,4 +12,4 @@ class Device:
 @dataclass(frozen=True)
 class DeviceList:
     columns: Tuple[str, ...]
-    devices: Tuple[Device]
+    devices: Tuple[Tuple[str, ...]]
