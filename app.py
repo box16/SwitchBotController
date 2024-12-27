@@ -1,25 +1,18 @@
 from flask import Flask, render_template
-import sqlite3
-import settings
+from ApplicationService.device_app_service import DeviceAppService
+from ApplicationService.dto_device import DeviceList
+from Infra.device_repository import DeviceRepository
 
 app = Flask(__name__)
 
 
-def get_devices():
-    connection = sqlite3.connect(settings.DEVICES_DB)
-    cursor = connection.cursor()
-
-    cursor.execute("SELECT id,type,name FROM devices")
-    devices = cursor.fetchall()
-    connection.close()
-
-    return ["id", "type", "name"], devices
-
-
 @app.route("/")
 def index():
-    columns, devices = get_devices()
-    return render_template("index.html", columns=columns, devices=devices)
+    device_app_service = DeviceAppService(DeviceRepository())
+    device_list: DeviceList = device_app_service.get_all()
+    return render_template(
+        "index.html", columns=device_list.columns, devices=device_list.devices
+    )
 
 
 if __name__ == "__main__":
