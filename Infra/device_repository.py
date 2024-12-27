@@ -1,11 +1,11 @@
-from Domain.device_repository import IDeviceReopsitory
+from Domain.device_repository import IDeviceRepository
 from Domain.device import Device
 from typing import Tuple
 import sqlite3
 import os
 
 
-class DeviceRepository(IDeviceReopsitory):
+class DeviceRepository(IDeviceRepository):
     def __init__(self):
         self_dir = os.path.dirname(os.path.abspath(__file__))
         self.db_path = os.path.join(self_dir, "devices.db")

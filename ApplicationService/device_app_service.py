@@ -1,11 +1,11 @@
-from Domain.device_repository import IDeviceReopsitory
+from Domain.device_repository import IDeviceRepository
 from Domain.device import Device
 from .dto_device import DeviceList
 from typing import Tuple
 
 
 class DeviceAppService:
-    def __init__(self, device_repository: IDeviceReopsitory):
+    def __init__(self, device_repository: IDeviceRepository):
         self.device_repository = device_repository
 
     def get_all(self):
