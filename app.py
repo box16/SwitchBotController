@@ -1,10 +1,9 @@
 from flask import Flask, render_template
-import sqlite3
-import settings
+from ApplicationService.device_app_service import DeviceAppService
 
 app = Flask(__name__)
 
-
+"""ここを移設
 def get_devices():
     connection = sqlite3.connect(settings.DEVICES_DB)
     cursor = connection.cursor()
@@ -14,12 +13,18 @@ def get_devices():
     connection.close()
 
     return ["id", "type", "name"], devices
+"""
 
 
 @app.route("/")
 def index():
-    columns, devices = get_devices()
-    return render_template("index.html", columns=columns, devices=devices)
+    # データ要求
+    device_app_service = DeviceAppService()
+    device_list = device_app_service.get()
+    # データ渡し
+    return render_template(
+        "index.html", columns=device_list.columns, devices=device_list.devices
+    )
 
 
 if __name__ == "__main__":
