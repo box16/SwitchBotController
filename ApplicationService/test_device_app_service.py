@@ -6,8 +6,8 @@ class TestDeviceAppService(unittest.TestCase):
     def setUp(self):
         self.device_app_service = DeviceAppService()
 
-    def test_get(self):
-        device_list = self.device_app_service.get()
+    def test_get_all(self):
+        device_list = self.device_app_service.get_all()
         self.assertIsNotNone(device_list)
 
 
