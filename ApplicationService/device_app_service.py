@@ -16,3 +16,6 @@ class DeviceAppService:
             dto_devices.append((device.id, device.name, device.type))
 
         return DeviceList(("id", "name", "type"), dto_devices)
+
+    def toggle_switch(self, device_id) -> bool:
+        pass

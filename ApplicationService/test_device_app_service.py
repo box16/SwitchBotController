@@ -13,6 +13,18 @@ class TestDeviceAppService(unittest.TestCase):
         device_list = self.device_app_service.get_all()
         self.assertEqual(len(device_list.devices), 1)
 
+    def test_toggle_switch(self):
+        device_id = 1
+        self.db.add(device_id, "ColorLight", "Color Bulb")
+        response = self.device_app_service.toggle_switch(device_id)
+        self.assertTrue(response)
+
+    def test_toggle_switch_non_existent_device(self):
+        device_id = 1
+        self.db.add(device_id, "ColorLight", "Color Bulb")
+        response = self.device_app_service.toggle_switch(device_id + 1)
+        self.assertFalse(response)
+
 
 if __name__ == "__main__":
     unittest.main()
