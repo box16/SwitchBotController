@@ -2,6 +2,7 @@ import unittest
 from .device_app_service import DeviceAppService
 from Infra.device_repository import InMemoryRepository
 from Infra.api_gateway import FakeSwitchBotGateway
+from utility.exception import DeviceNotFound
 
 
 class TestDeviceAppService(unittest.TestCase):
@@ -18,14 +19,16 @@ class TestDeviceAppService(unittest.TestCase):
     def test_toggle_switch(self):
         device_id = 1
         self.db.add(device_id, "ColorLight", "Color Bulb")
-        response = self.device_app_service.toggle_switch(device_id)
-        self.assertTrue(response)
+        try:
+            self.device_app_service.toggle_switch(device_id)
+        except Exception as e:
+            assert False, f"{e}"
 
     def test_toggle_switch_non_existent_device(self):
         device_id = 1
         self.db.add(device_id, "ColorLight", "Color Bulb")
-        response = self.device_app_service.toggle_switch(device_id + 1)
-        self.assertFalse(response)
+        with self.assertRaises(DeviceNotFound):
+            self.device_app_service.toggle_switch(device_id + 1)
 
 
 if __name__ == "__main__":

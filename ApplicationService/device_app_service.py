@@ -3,6 +3,7 @@ from Domain.device import Device
 from Domain.api_gateway import ISwitchBotGateway
 from .dto_device import DeviceList
 from typing import Tuple
+from utility.exception import DeviceNotFound
 
 
 class DeviceAppService:
@@ -21,5 +22,8 @@ class DeviceAppService:
 
         return DeviceList(("id", "name", "type"), dto_devices)
 
-    def toggle_switch(self, device_id) -> bool:
+    def toggle_switch(self, device_id):
+        if not self.device_repository.is_exist(device_id):
+            raise DeviceNotFound()
+
         self.api_gateway.send_toggle_switch(device_id)

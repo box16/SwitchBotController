@@ -25,11 +25,20 @@ class DeviceRepository(IDeviceRepository):
 
         return tuple(devices)
 
+    def is_exist(self, device_id) -> bool:
+        connection = sqlite3.connect(self.db_path)
+        cursor = connection.cursor()
+
+        # executeはパラメーターにシーケンスを要求するため、引数1つでもこのように指定する
+        cursor.execute("SELECT EXISTS(SELECT 1 FROM devices WHERE id=?)", (device_id,))
+        # fetchone() は (0,) または (1,) のタプルを返すので、添字 [0] を取り出して bool にする
+        return bool(cursor.fetchone()[0])
+
 
 class InMemoryRepository(IDeviceRepository):
     def __init__(self):
-        self.conn = sqlite3.connect(":memory:")
-        cursor = self.conn.cursor()
+        self.connection = sqlite3.connect(":memory:")
+        cursor = self.connection.cursor()
         cursor.execute(
             """
                 CREATE TABLE devices (
@@ -41,10 +50,10 @@ class InMemoryRepository(IDeviceRepository):
                 )
             """
         )
-        self.conn.commit()
+        self.connection.commit()
 
     def add(self, id, name, type, enable_cloud=True, hub_device_id="0000"):
-        cursor = self.conn.cursor()
+        cursor = self.connection.cursor()
         cursor.execute(
             """
             INSERT OR IGNORE INTO devices (id, name, type, enable_cloud_service, hub_device_id)
@@ -58,10 +67,10 @@ class InMemoryRepository(IDeviceRepository):
                 hub_device_id,
             ),
         )
-        self.conn.commit()
+        self.connection.commit()
 
     def get_all(self):
-        cursor = self.conn.cursor()
+        cursor = self.connection.cursor()
 
         cursor.execute("SELECT id,name,type FROM devices")
         result = cursor.fetchall()
@@ -72,3 +81,9 @@ class InMemoryRepository(IDeviceRepository):
             devices.append(device)
 
         return tuple(devices)
+
+    def is_exist(self, device_id) -> bool:
+        cursor = self.connection.cursor()
+
+        cursor.execute("SELECT EXISTS(SELECT 1 FROM devices WHERE id=?)", (device_id,))
+        return bool(cursor.fetchone()[0])
