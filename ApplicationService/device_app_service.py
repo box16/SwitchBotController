@@ -1,7 +1,8 @@
 from Domain.device_repository import IDeviceRepository
 from Domain.device import Device
 from Domain.api_gateway import ISwitchBotGateway
-from .dto_device import DeviceList
+from ApplicationService.dto_device import DeviceList
+from ApplicationService.dto_device import Device as DDevice
 from typing import Tuple
 from utility.exception import DeviceNotFound
 
@@ -15,11 +16,7 @@ class DeviceAppService:
 
     def get_all(self):
         devices: Tuple[Device] = self.device_repository.get_all()
-
-        dto_devices = []
-        for device in devices:
-            dto_devices.append((device.id, device.name, device.type))
-
+        dto_devices = tuple(DDevice(d.id, d.name, d.type) for d in devices)
         return DeviceList(("id", "name", "type"), dto_devices)
 
     def toggle_switch(self, device_id):
