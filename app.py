@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from ApplicationService.device_app_service import DeviceAppService
 from ApplicationService.dto_device import DeviceList
 from Infra.device_repository import DeviceRepository
@@ -14,6 +14,12 @@ def index():
     return render_template(
         "index.html", columns=device_list.columns, devices=device_list.devices
     )
+
+
+@app.route("/toggle/<device_id>", methods=["POST"])
+def toggle_switch(device_id):
+    device_app_service.toggle_switch(device_id)
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":

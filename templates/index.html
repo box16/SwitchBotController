@@ -27,6 +27,7 @@
                 {% for column in columns %}
                 <th>{{ column }}</th>
                 {% endfor %}
+                <th>コマンド</th>
             </tr>
         </thead>
         <tbody>
@@ -35,6 +36,11 @@
                 {% for value in device %}
                 <td>{{ value }}</td>
                 {% endfor %}
+                <td>
+                    <form action="{{ url_for('toggle_switch', device_id=device[0]) }}" method="post" style="display:inline;">
+                      <button type="submit"> ON/OFF 切り替え </button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
