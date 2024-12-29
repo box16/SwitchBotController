@@ -1,12 +1,14 @@
 import unittest
 from .device_app_service import DeviceAppService
 from Infra.device_repository import InMemoryRepository
+from Infra.api_gateway import FakeSwitchBotGateway
 
 
 class TestDeviceAppService(unittest.TestCase):
     def setUp(self):
         self.db = InMemoryRepository()
-        self.device_app_service = DeviceAppService(self.db)
+        self.api_gateway = FakeSwitchBotGateway()
+        self.device_app_service = DeviceAppService(self.db, self.api_gateway)
 
     def test_get_all(self):
         self.db.add("1", "ColorLight", "Color Bulb")
