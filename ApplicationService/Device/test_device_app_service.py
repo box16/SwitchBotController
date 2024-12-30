@@ -3,11 +3,13 @@ from ApplicationService.Device.device_app_service import DeviceAppService
 from Infra.device_repository import InMemoryDeviceRepository
 from Infra.api_gateway import FakeSwitchBotGateway
 from utility.exception import DeviceNotFound
+import sqlite3
 
 
 class TestDeviceAppService(unittest.TestCase):
     def setUp(self):
-        self.db = InMemoryDeviceRepository()
+        self.connection = sqlite3.connect(":memory:")
+        self.db = InMemoryDeviceRepository(self.connection)
         self.api_gateway = FakeSwitchBotGateway()
         self.device_app_service = DeviceAppService(self.db, self.api_gateway)
 

@@ -1,5 +1,6 @@
 from Domain.Group.group_repository import IGroupRepository
 from Domain.api_gateway import ISwitchBotGateway
+from utility.exception import DeviceNotFound
 from typing import List
 
 
@@ -9,4 +10,7 @@ class GroupAppService:
         self.api_gateway = api_gateway
 
     def create_group(self, devices: List[str], name: str):
-        self.db.add(devices, name)
+        try:
+            self.db.add(devices, name)
+        except DeviceNotFound as e:
+            raise e

@@ -36,8 +36,8 @@ class DeviceRepository(IDeviceRepository):
 
 
 class InMemoryDeviceRepository(IDeviceRepository):
-    def __init__(self):
-        self.connection = sqlite3.connect(":memory:")
+    def __init__(self, connection: sqlite3.Connection):
+        self.connection = connection
         cursor = self.connection.cursor()
         cursor.execute(
             """
