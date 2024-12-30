@@ -35,7 +35,7 @@ class DeviceRepository(IDeviceRepository):
         return bool(cursor.fetchone()[0])
 
 
-class InMemoryRepository(IDeviceRepository):
+class InMemoryDeviceRepository(IDeviceRepository):
     def __init__(self):
         self.connection = sqlite3.connect(":memory:")
         cursor = self.connection.cursor()

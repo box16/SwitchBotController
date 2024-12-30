@@ -1,13 +1,13 @@
 import unittest
 from ApplicationService.Group.group_app_service import GroupAppService
 from Infra.group_repository import InMemoryGroupRepository
-from Infra.device_repository import InMemoryRepository
+from Infra.device_repository import InMemoryDeviceRepository
 from Infra.api_gateway import FakeSwitchBotGateway
 
 
 class TestGroupAppService(unittest.TestCase):
     def setUp(self):
-        self.device_db = InMemoryRepository()  # ここクラス名見直し
+        self.device_db = InMemoryDeviceRepository()
         self.group_db = InMemoryGroupRepository()
         self.api_gateway = FakeSwitchBotGateway()
         self.group_app_service = GroupAppService(self.group_db, self.api_gateway)
