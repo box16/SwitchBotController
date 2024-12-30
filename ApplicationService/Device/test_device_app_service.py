@@ -1,5 +1,5 @@
 import unittest
-from .device_app_service import DeviceAppService
+from ApplicationService.Device.device_app_service import DeviceAppService
 from Infra.device_repository import InMemoryRepository
 from Infra.api_gateway import FakeSwitchBotGateway
 from utility.exception import DeviceNotFound

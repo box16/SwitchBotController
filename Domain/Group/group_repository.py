@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Domain.group import Group
+from Domain.Group.group import Group
 from typing import Tuple
 
 

@@ -1,5 +1,5 @@
-from Domain.device_repository import IDeviceRepository
-from Domain.device import Device
+from Domain.Device.device_repository import IDeviceRepository
+from Domain.Device.device import Device
 from typing import Tuple
 import sqlite3
 import os

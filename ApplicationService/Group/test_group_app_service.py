@@ -1,5 +1,5 @@
 import unittest
-from ApplicationService.group_app_service import GroupAppService
+from ApplicationService.Group.group_app_service import GroupAppService
 from Infra.group_repository import InMemoryGroupRepository
 from Infra.device_repository import InMemoryRepository
 from Infra.api_gateway import FakeSwitchBotGateway

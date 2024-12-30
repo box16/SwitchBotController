@@ -1,4 +1,4 @@
-from Domain.group_repository import IGroupRepository
+from Domain.Group.group_repository import IGroupRepository
 from Domain.api_gateway import ISwitchBotGateway
 
 

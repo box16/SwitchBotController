@@ -1,5 +1,5 @@
-from Domain.group_repository import IGroupRepository
-from Domain.group import Group
+from Domain.Group.group_repository import IGroupRepository
+from Domain.Group.group import Group
 from typing import Tuple
 
 
