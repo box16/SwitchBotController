@@ -20,13 +20,13 @@ class TestGroupAppService(unittest.TestCase):
         self.device_db.add("3", "ColorLight3", "Color Bulb")
 
     def test_create_group_no_groups(self):
-        all_group = self.group_db.get_all()
+        all_group = self.group_app_service.get_all()
 
         self.assertEqual(len(all_group), 0)
 
     def test_create_group_one_groups(self):
         self.group_app_service.create_group(["1", "2", "3"], "group1")
-        all_group = self.group_db.get_all()
+        all_group = self.group_app_service.get_all()
 
         self.assertEqual(len(all_group), 1)
 
@@ -34,7 +34,7 @@ class TestGroupAppService(unittest.TestCase):
         with self.assertRaises(DeviceNotFound):
             self.group_app_service.create_group(["1", "2", "5"], "group1")
 
-        all_group = self.group_db.get_all()
+        all_group = self.group_app_service.get_all()
         self.assertEqual(len(all_group), 0)
 
 
