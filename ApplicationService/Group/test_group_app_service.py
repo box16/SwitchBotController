@@ -3,7 +3,11 @@ from ApplicationService.Group.group_app_service import GroupAppService
 from Infra.group_repository import InMemoryGroupRepository
 from Infra.device_repository import InMemoryDeviceRepository
 from Infra.api_gateway import FakeSwitchBotGateway
-from utility.exception import DeviceNotFound
+from utility.exception import (
+    DeviceNotFound,
+    CreateGroupWithoutDevice,
+    CreateGroupWithoutname,
+)
 import sqlite3
 
 
@@ -19,12 +23,12 @@ class TestGroupAppService(unittest.TestCase):
         self.device_db.add("2", "ColorLight2", "Color Bulb")
         self.device_db.add("3", "ColorLight3", "Color Bulb")
 
-    def test_create_group_no_groups(self):
+    def test_get_all_no_groups(self):
         all_group = self.group_app_service.get_all()
 
         self.assertEqual(len(all_group), 0)
 
-    def test_create_group_one_groups(self):
+    def test_get_all_one_groups(self):
         self.group_app_service.create_group(["1", "2", "3"], "group1")
         all_group = self.group_app_service.get_all()
 
@@ -36,6 +40,14 @@ class TestGroupAppService(unittest.TestCase):
 
         all_group = self.group_app_service.get_all()
         self.assertEqual(len(all_group), 0)
+
+    def test_create_group_no_device(self):
+        with self.assertRaises(CreateGroupWithoutDevice):
+            self.group_app_service.create_group([], "group1")
+
+    def test_create_group_no_name(self):
+        with self.assertRaises(CreateGroupWithoutname):
+            self.group_app_service.create_group(["1", "2", "3"], "")
 
 
 if __name__ == "__main__":
