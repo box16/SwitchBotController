@@ -7,6 +7,7 @@ from Infra.device_repository import DeviceRepository
 from Infra.api_gateway import SwitchBotGateway
 from Infra.group_repository import GroupRepository
 from typing import Tuple
+from utility.exception import GroupException
 
 app = Flask(__name__)
 device_app_service = DeviceAppService(DeviceRepository(), SwitchBotGateway())
@@ -38,8 +39,10 @@ def create_group():
     elif request.method == "POST":
         selected_device = request.form.getlist("selected")
         group_name = request.form.get("name")
-        print(selected_device)
-        print(group_name)
+        try:
+            group_app_service.create_group(selected_device, group_name)
+        except GroupException as e:
+            print(f"グループ作成に失敗しました : {str(e)}")
         return redirect(url_for("index"))
 
 

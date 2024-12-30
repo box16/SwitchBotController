@@ -38,9 +38,9 @@ class GroupRepository(IGroupRepository):
 
     def add(self, device_id_list: List[Device], name: str) -> None:
         try:
-            self.connection.execute("BEGIN TRANSACTION")
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
+            connection.execute("BEGIN TRANSACTION")
             cursor.execute(
                 """
                 INSERT INTO groups (name)

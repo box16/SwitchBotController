@@ -45,9 +45,15 @@ class TestGroupAppService(unittest.TestCase):
         with self.assertRaises(CreateGroupWithoutDevice):
             self.group_app_service.create_group([], "group1")
 
+        all_group = self.group_app_service.get_all()
+        self.assertEqual(len(all_group), 0)
+
     def test_create_group_no_name(self):
         with self.assertRaises(CreateGroupWithoutname):
             self.group_app_service.create_group(["1", "2", "3"], "")
+
+        all_group = self.group_app_service.get_all()
+        self.assertEqual(len(all_group), 0)
 
 
 if __name__ == "__main__":
