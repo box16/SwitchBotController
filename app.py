@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for
-from ApplicationService.device_app_service import DeviceAppService
-from ApplicationService.dto_device import DeviceList
+from ApplicationService.Device.device_app_service import DeviceAppService
+from ApplicationService.Device.dto_device import DeviceList
 from Infra.device_repository import DeviceRepository
 from Infra.api_gateway import SwitchBotGateway
 
