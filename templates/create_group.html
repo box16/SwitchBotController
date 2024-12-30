@@ -21,27 +21,35 @@
 </head>
 <body>
     <h1>デバイス一覧</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>id</th>
-                <th>name</th>
-                <th>type</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for device in devices %}
-            <tr>
-                <td>{{ device.id }}</td>
-                <td>{{ device.name }}</td>
-                <td>{{ device.type }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <form action="{{ url_for('create_group') }}" method="post">
+        <input type="text" name="name">
+        <table>
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for device in devices %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="selected" value="{{ device.id }}">
+                    </td>
+                    <td>{{ device.id }}</td>
+                    <td>{{ device.name }}</td>
+                    <td>{{ device.type }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit"> グループ作成 </button>
+    </form>
 
 <form action="{{ url_for('index') }}" method="get">
     <button type="submit"> 戻る </button>
 </form>
+
 </body>
 </html>

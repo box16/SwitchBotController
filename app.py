@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from ApplicationService.Device.device_app_service import DeviceAppService
 from ApplicationService.Device.dto_device import Device
 from ApplicationService.Group.group_app_service import GroupAppService
@@ -30,10 +30,17 @@ def toggle_switch(device_id):
     return redirect(url_for("index"))
 
 
-@app.route("/create_group", methods=["GET"])
+@app.route("/create_group", methods=["GET", "POST"])
 def create_group():
-    devices: Tuple[Device] = device_app_service.get_all()
-    return render_template("create_group.html", devices=devices)
+    if request.method == "GET":
+        devices: Tuple[Device] = device_app_service.get_all()
+        return render_template("create_group.html", devices=devices)
+    elif request.method == "POST":
+        selected_device = request.form.getlist("selected")
+        group_name = request.form.get("name")
+        print(selected_device)
+        print(group_name)
+        return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
