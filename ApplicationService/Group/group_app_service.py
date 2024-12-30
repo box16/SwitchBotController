@@ -9,8 +9,8 @@ class GroupAppService:
         self.db = db
         self.api_gateway = api_gateway
 
-    def create_group(self, devices: List[str], name: str):
+    def create_group(self, device_id_list: List[str], name: str):
         try:
-            self.db.add(devices, name)
+            self.db.add(device_id_list, name)
         except DeviceNotFound as e:
             raise e

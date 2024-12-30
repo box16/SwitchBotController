@@ -32,7 +32,7 @@ class InMemoryGroupRepository(IGroupRepository):
         )
         self.connection.commit()
 
-    def add(self, devices: List[Device], name: str):
+    def add(self, device_id_list: List[Device], name: str):
         try:
             self.connection.execute("BEGIN TRANSACTION")
             cursor = self.connection.cursor()
@@ -44,16 +44,16 @@ class InMemoryGroupRepository(IGroupRepository):
                 (name,),
             )
 
-            inserted_group_id = cursor.lastrowid
-            for device in devices:
+            new_group_id = cursor.lastrowid
+            for device_id in device_id_list:
                 cursor.execute(
                     """
                     INSERT INTO group_device (group_id,device_id)
                     VALUES (?,?)
                     """,
                     (
-                        inserted_group_id,
-                        device,
+                        new_group_id,
+                        device_id,
                     ),
                 )
             self.connection.commit()

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from Domain.Group.group import Group
-from typing import Tuple
+from typing import Tuple, List
 
 
 class IGroupRepository(ABC):
@@ -9,5 +9,5 @@ class IGroupRepository(ABC):
         pass
 
     @abstractmethod
-    def add(self) -> None:
+    def add(self, device_id_list: List[str], name: str) -> None:
         pass
