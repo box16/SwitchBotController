@@ -13,7 +13,7 @@ device_app_service = DeviceAppService(DeviceRepository(), SwitchBotGateway())
 group_app_service = GroupAppService(GroupRepository(), SwitchBotGateway())
 
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index():
     devices: Tuple[Device] = device_app_service.get_all()
     groups: Tuple[Group] = group_app_service.get_all()
@@ -28,6 +28,12 @@ def index():
 def toggle_switch(device_id):
     device_app_service.toggle_switch(device_id)
     return redirect(url_for("index"))
+
+
+@app.route("/create_group", methods=["GET"])
+def create_group():
+    devices: Tuple[Device] = device_app_service.get_all()
+    return render_template("create_group.html", devices=devices)
 
 
 if __name__ == "__main__":

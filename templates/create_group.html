@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwitchBotコントロール Top</title>
+    <title>SwitchBotコントロール グループ作成</title>
     <style>
         table {
             border-collapse: collapse;
@@ -27,7 +27,6 @@
                 <th>id</th>
                 <th>name</th>
                 <th>type</th>
-                <th>コマンド</th>
             </tr>
         </thead>
         <tbody>
@@ -36,37 +35,13 @@
                 <td>{{ device.id }}</td>
                 <td>{{ device.name }}</td>
                 <td>{{ device.type }}</td>
-                <td>
-                    <form action="{{ url_for('toggle_switch', device_id=device.id) }}" method="post" style="display:inline;">
-                      <button type="submit"> ON/OFF 切り替え </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    
-    <h1>グループ一覧</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>id</th>
-                <th>name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for group in groups %}
-            <tr>
-                <td>{{ group.id }}</td>
-                <td>{{ group.name }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <form action="{{ url_for('create_group') }}" method="get">
-        <button type="submit"> グループ作成 </button>
-    </form>
-
+<form action="{{ url_for('index') }}" method="get">
+    <button type="submit"> 戻る </button>
+</form>
 </body>
 </html>
