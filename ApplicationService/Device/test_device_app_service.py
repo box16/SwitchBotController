@@ -16,7 +16,7 @@ class TestDeviceAppService(unittest.TestCase):
     def test_get_all(self):
         self.db.add("1", "ColorLight", "Color Bulb")
         device_list = self.device_app_service.get_all()
-        self.assertEqual(len(device_list.devices), 1)
+        self.assertEqual(len(device_list), 1)
 
     def test_toggle_switch(self):
         device_id = 1

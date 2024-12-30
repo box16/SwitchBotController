@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for
 from ApplicationService.Device.device_app_service import DeviceAppService
-from ApplicationService.Device.dto_device import DeviceList
+from ApplicationService.Device.dto_device import Device
 from ApplicationService.Group.group_app_service import GroupAppService
 from ApplicationService.Group.dto_group import Group
 from Infra.device_repository import DeviceRepository
@@ -15,12 +15,11 @@ group_app_service = GroupAppService(GroupRepository(), SwitchBotGateway())
 
 @app.route("/")
 def index():
-    device_list: DeviceList = device_app_service.get_all()
+    device_list: Tuple[Device] = device_app_service.get_all()
     group_list: Tuple[Group] = group_app_service.get_all()
     return render_template(
         "index.html",
-        columns=device_list.columns,
-        devices=device_list.devices,  # ここ修正
+        devices=device_list.devices,
         groups=group_list,
     )
 
