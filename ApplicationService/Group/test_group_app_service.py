@@ -20,7 +20,7 @@ class TestGroupAppService(unittest.TestCase):
         all_group = self.group_db.get_all()
         self.assertEqual(len(all_group), 0)
 
-        self.group_app_service.create_group(["1", "2", "3"])
+        self.group_app_service.create_group(["1", "2", "3"], "group1")
         all_group = self.group_db.get_all()
         self.assertEqual(len(all_group), 1)
 

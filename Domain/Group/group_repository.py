@@ -7,3 +7,7 @@ class IGroupRepository(ABC):
     @abstractmethod
     def get_all(self) -> Tuple[Group]:
         pass
+
+    @abstractmethod
+    def add(self) -> None:
+        pass
