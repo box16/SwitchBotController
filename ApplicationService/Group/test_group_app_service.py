@@ -1,14 +1,10 @@
 import unittest
+from utility.exception import DeviceNotFound, CreateGroupError
+import sqlite3
 from ApplicationService.Group.group_app_service import GroupAppService
 from Infra.group_repository import InMemoryGroupRepository
 from Infra.device_repository import InMemoryDeviceRepository
 from Infra.api_gateway import FakeSwitchBotGateway
-from utility.exception import (
-    DeviceNotFound,
-    CreateGroupWithoutDevice,
-    CreateGroupWithoutname,
-)
-import sqlite3
 
 
 class TestGroupAppService(unittest.TestCase):
@@ -42,14 +38,14 @@ class TestGroupAppService(unittest.TestCase):
         self.assertEqual(len(all_group), 0)
 
     def test_create_group_no_device(self):
-        with self.assertRaises(CreateGroupWithoutDevice):
+        with self.assertRaises(CreateGroupError):
             self.group_app_service.create_group([], "group1")
 
         all_group = self.group_app_service.get_all()
         self.assertEqual(len(all_group), 0)
 
     def test_create_group_no_name(self):
-        with self.assertRaises(CreateGroupWithoutname):
+        with self.assertRaises(CreateGroupError):
             self.group_app_service.create_group(["1", "2", "3"], "")
 
         all_group = self.group_app_service.get_all()

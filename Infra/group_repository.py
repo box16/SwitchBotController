@@ -1,10 +1,10 @@
+from utility.exception import DeviceNotFound
+import sqlite3
+import os
 from Domain.Group.group_repository import IGroupRepository
 from Domain.Group.group import Group
 from Domain.Device.device import Device
-from utility.exception import DeviceNotFound
-import sqlite3
-from typing import List
-import os
+from Domain.Group.group_repository import GroupCreateCommand
 
 
 class GroupRepository(IGroupRepository):
@@ -36,7 +36,7 @@ class GroupRepository(IGroupRepository):
         connection.commit()
         connection.close()
 
-    def add(self, device_id_list: List[Device], name: str) -> None:
+    def add(self, command: GroupCreateCommand) -> None:
         try:
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
@@ -46,11 +46,11 @@ class GroupRepository(IGroupRepository):
                 INSERT INTO groups (name)
                 VALUES (?)
                 """,
-                (name,),
+                (command.name,),
             )
 
             new_group_id = cursor.lastrowid
-            for device_id in device_id_list:
+            for device_id in command.device_list:
                 cursor.execute(
                     """
                     INSERT INTO group_device (group_id,device_id)
@@ -108,7 +108,7 @@ class InMemoryGroupRepository(IGroupRepository):
         )
         self.connection.commit()
 
-    def add(self, device_id_list: List[Device], name: str):
+    def add(self, command: GroupCreateCommand):
         try:
             self.connection.execute("BEGIN TRANSACTION")
             cursor = self.connection.cursor()
@@ -117,11 +117,11 @@ class InMemoryGroupRepository(IGroupRepository):
                 INSERT INTO groups (name)
                 VALUES (?)
                 """,
-                (name,),
+                (command.name,),
             )
 
             new_group_id = cursor.lastrowid
-            for device_id in device_id_list:
+            for device_id in command.device_list:
                 cursor.execute(
                     """
                     INSERT INTO group_device (group_id,device_id)
