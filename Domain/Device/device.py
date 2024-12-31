@@ -3,7 +3,6 @@ from utility.exception import DeviceException
 from typing import Tuple
 
 
-# TODO 他のエクセプション
 @dataclass(frozen=True)
 class DeviceID:
     id: str
