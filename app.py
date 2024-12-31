@@ -1,8 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, request
 from ApplicationService.Device.device_app_service import DeviceAppService
-from ApplicationService.Device.dto_device import Device
+from ApplicationService.Device.device_dto import Device
 from ApplicationService.Group.group_app_service import GroupAppService
-from ApplicationService.Group.dto_group import Group
+from ApplicationService.Group.group_dto import Group
+from ApplicationService.Group.group_command import CreateGroupCommand
 from Infra.device_repository import DeviceRepository
 from Infra.api_gateway import SwitchBotGateway
 from Infra.group_repository import GroupRepository
@@ -38,10 +39,11 @@ def create_group():
         devices: Tuple[Device] = device_app_service.get_all()
         return render_template("create_group.html", devices=devices)
     elif request.method == "POST":
-        selected_device = request.form.getlist("selected")
-        group_name = request.form.get("name")
         try:
-            group_app_service.create_group(selected_device, group_name)
+            selected_device = request.form.getlist("selected")
+            group_name = request.form.get("name")
+            command = CreateGroupCommand(group_name, selected_device)
+            group_app_service.create_group(command)
         except GroupException as e:
             print(f"グループ作成に失敗しました : {str(e)}")
         return redirect(url_for("index"))

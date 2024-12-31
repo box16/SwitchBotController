@@ -2,9 +2,7 @@ from utility.exception import DeviceNotFound
 import sqlite3
 import os
 from Domain.Group.group_repository import IGroupRepository
-from Domain.Group.group import Group
-from Domain.Device.device import Device
-from Domain.Group.group_repository import GroupCreateCommand
+from Domain.Group.group import Group, NewGroup
 
 
 class GroupRepository(IGroupRepository):
@@ -36,7 +34,7 @@ class GroupRepository(IGroupRepository):
         connection.commit()
         connection.close()
 
-    def add(self, command: GroupCreateCommand) -> None:
+    def add(self, new_group: NewGroup) -> None:
         try:
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
@@ -46,11 +44,11 @@ class GroupRepository(IGroupRepository):
                 INSERT INTO groups (name)
                 VALUES (?)
                 """,
-                (command.name,),
+                (new_group.name.get(),),
             )
 
             new_group_id = cursor.lastrowid
-            for device_id in command.device_list:
+            for device_id in new_group.device_list:
                 cursor.execute(
                     """
                     INSERT INTO group_device (group_id,device_id)
@@ -58,14 +56,13 @@ class GroupRepository(IGroupRepository):
                     """,
                     (
                         new_group_id,
-                        device_id,
+                        device_id.get(),
                     ),
                 )
             connection.commit()
         except sqlite3.IntegrityError as e:
             connection.rollback()
-            print(f"存在しないデバイスIDが指定されました: {e}")
-            raise DeviceNotFound
+            raise DeviceNotFound("存在しないデバイスIDが指定されました")
 
     def get_all(self):
         connection = sqlite3.connect(self.db_path)
@@ -108,7 +105,7 @@ class InMemoryGroupRepository(IGroupRepository):
         )
         self.connection.commit()
 
-    def add(self, command: GroupCreateCommand):
+    def add(self, new_group: NewGroup):
         try:
             self.connection.execute("BEGIN TRANSACTION")
             cursor = self.connection.cursor()
@@ -117,11 +114,11 @@ class InMemoryGroupRepository(IGroupRepository):
                 INSERT INTO groups (name)
                 VALUES (?)
                 """,
-                (command.name,),
+                (new_group.name.get(),),
             )
 
             new_group_id = cursor.lastrowid
-            for device_id in command.device_list:
+            for device_id in new_group.device_list:
                 cursor.execute(
                     """
                     INSERT INTO group_device (group_id,device_id)
@@ -129,14 +126,13 @@ class InMemoryGroupRepository(IGroupRepository):
                     """,
                     (
                         new_group_id,
-                        device_id,
+                        device_id.get(),
                     ),
                 )
             self.connection.commit()
         except sqlite3.IntegrityError as e:
             self.connection.rollback()
-            print(f"存在しないデバイスIDが指定されました: {e}")
-            raise DeviceNotFound
+            raise DeviceNotFound("存在しないデバイスIDが指定されました")
 
     def get_all(self):
         cursor = self.connection.cursor()

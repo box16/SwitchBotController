@@ -1,7 +1,8 @@
 import unittest
-from utility.exception import DeviceNotFound, CreateGroupError
 import sqlite3
+from utility.exception import CreateGroupError
 from ApplicationService.Group.group_app_service import GroupAppService
+from ApplicationService.Group.group_command import CreateGroupCommand
 from Infra.group_repository import InMemoryGroupRepository
 from Infra.device_repository import InMemoryDeviceRepository
 from Infra.api_gateway import FakeSwitchBotGateway
@@ -25,28 +26,32 @@ class TestGroupAppService(unittest.TestCase):
         self.assertEqual(len(all_group), 0)
 
     def test_get_all_one_groups(self):
-        self.group_app_service.create_group(["1", "2", "3"], "group1")
+        command = CreateGroupCommand("group1", ["1", "2", "3"])
+        self.group_app_service.create_group(command)
         all_group = self.group_app_service.get_all()
 
         self.assertEqual(len(all_group), 1)
 
     def test_create_group_non_existent_device_id(self):
-        with self.assertRaises(DeviceNotFound):
-            self.group_app_service.create_group(["1", "2", "5"], "group1")
+        with self.assertRaises(CreateGroupError):
+            command = CreateGroupCommand("group1", ["1", "2", "5"])
+            self.group_app_service.create_group(command)
 
         all_group = self.group_app_service.get_all()
         self.assertEqual(len(all_group), 0)
 
     def test_create_group_no_device(self):
         with self.assertRaises(CreateGroupError):
-            self.group_app_service.create_group([], "group1")
+            command = CreateGroupCommand("group1", [])
+            self.group_app_service.create_group(command)
 
         all_group = self.group_app_service.get_all()
         self.assertEqual(len(all_group), 0)
 
     def test_create_group_no_name(self):
         with self.assertRaises(CreateGroupError):
-            self.group_app_service.create_group(["1", "2", "3"], "")
+            command = CreateGroupCommand("", ["1", "2", "3"])
+            self.group_app_service.create_group(command)
 
         all_group = self.group_app_service.get_all()
         self.assertEqual(len(all_group), 0)

@@ -1,7 +1,7 @@
 from Domain.Device.device_repository import IDeviceRepository
 from Domain.Device.device import Device
 from Domain.api_gateway import ISwitchBotGateway
-from ApplicationService.Device.dto_device import Device as DDevice
+from ApplicationService.Device.device_dto import Device as DDevice
 from typing import Tuple
 from utility.exception import DeviceNotFound
 
