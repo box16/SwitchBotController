@@ -33,6 +33,7 @@ def toggle_switch(device_id):
 
 @app.route("/create_group", methods=["GET", "POST"])
 def create_group():
+    # TODO ここもっとスッキリさせたい
     if request.method == "GET":
         devices: Tuple[Device] = device_app_service.get_all()
         return render_template("create_group.html", devices=devices)

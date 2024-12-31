@@ -1,3 +1,4 @@
+# TODO ファイル分け
 class DeviceException(Exception):
     pass
 
