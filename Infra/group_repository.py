@@ -1,4 +1,4 @@
-from utility.exception import DeviceNotFound
+from utility.exception import GroupException
 import sqlite3
 import os
 from Domain.Group.group_repository import IGroupRepository
@@ -62,7 +62,9 @@ class GroupRepository(IGroupRepository):
             connection.commit()
         except sqlite3.IntegrityError as e:
             connection.rollback()
-            raise DeviceNotFound("存在しないデバイスIDが指定されました")
+            raise GroupException(
+                f"DeviceID:{device_id.get()},NewGroupID:{new_group_id},{str(e)}"
+            )
 
     def get_all(self):
         connection = sqlite3.connect(self.db_path)
@@ -132,7 +134,9 @@ class InMemoryGroupRepository(IGroupRepository):
             self.connection.commit()
         except sqlite3.IntegrityError as e:
             self.connection.rollback()
-            raise DeviceNotFound("存在しないデバイスIDが指定されました")
+            raise GroupException(
+                f"DeviceID:{device_id.get()},NewGroupID:{new_group_id},{str(e)}"
+            )
 
     def get_all(self):
         cursor = self.connection.cursor()
