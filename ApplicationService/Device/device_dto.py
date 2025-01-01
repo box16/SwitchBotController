@@ -7,9 +7,3 @@ class Device:
     id: str
     name: str
     type: str
-
-
-@dataclass(frozen=True)
-class DeviceList:
-    columns: Tuple[str, ...]
-    devices: Tuple[Device, ...]

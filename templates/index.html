@@ -24,9 +24,9 @@
     <table>
         <thead>
             <tr>
-                {% for column in columns %}
-                <th>{{ column }}</th>
-                {% endfor %}
+                <th>id</th>
+                <th>name</th>
+                <th>type</th>
                 <th>コマンド</th>
             </tr>
         </thead>
@@ -45,5 +45,28 @@
             {% endfor %}
         </tbody>
     </table>
+    
+    <h1>グループ一覧</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+            <tr>
+                <td>{{ group.id }}</td>
+                <td>{{ group.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form action="{{ url_for('create_group') }}" method="get">
+        <button type="submit"> グループ作成 </button>
+    </form>
+
 </body>
 </html>

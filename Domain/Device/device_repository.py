@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Domain.device import Device
+from Domain.Device.device import Device
 from typing import Tuple
 
 

@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class Device:
+class Group:
     id: str
     name: str
-    type: str
