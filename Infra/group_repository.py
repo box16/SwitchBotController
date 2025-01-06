@@ -2,7 +2,8 @@ from utility.exception import GroupException
 import sqlite3
 import os
 from Domain.Group.group_repository import IGroupRepository
-from Domain.Group.group import Group, NewGroup, GroupID
+from Domain.Group.group import Group, NewGroup, GroupID, GroupName
+from Domain.Device.device import DeviceID
 
 
 class GroupRepository(IGroupRepository):
@@ -149,10 +150,25 @@ class InMemoryGroupRepository(IGroupRepository):
 
         groups = []
         for r in result:
-            group = Group(r[0], r[1])
+            group = Group(GroupID(r[0]), GroupName(r[1]))
             groups.append(group)
 
         return tuple(groups)
 
     def get_devices(self, group_id: GroupID):
-        pass
+        cursor = self.connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT device_id
+            FROM group_device
+            WHERE group_id = ?
+        """,
+            (group_id.get(),),
+        )
+
+        device_ids = cursor.fetchall()
+        if not device_ids:
+            raise GroupException(f"グループIDが存在しません")
+
+        return tuple(DeviceID(id) for id in device_ids)

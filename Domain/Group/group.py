@@ -17,7 +17,7 @@ class GroupName:
 
 @dataclass(frozen=True)
 class GroupID:
-    id: str
+    id: int
 
     def __post_init__(self):
         if not self.id:

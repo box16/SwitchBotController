@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
 from Domain.Group.group import Group, NewGroup, GroupID
-from Domain.Device.device import Device
+from Domain.Device.device import DeviceID
 
 
 class IGroupRepository(ABC):
@@ -14,5 +14,5 @@ class IGroupRepository(ABC):
         pass
 
     @abstractmethod
-    def get_devices(self, group_id: GroupID) -> Tuple[Device]:
+    def get_devices(self, group_id: GroupID) -> Tuple[DeviceID]:
         pass
