@@ -2,7 +2,7 @@ from utility.exception import GroupException
 import sqlite3
 import os
 from Domain.Group.group_repository import IGroupRepository
-from Domain.Group.group import Group, NewGroup
+from Domain.Group.group import Group, NewGroup, GroupID
 
 
 class GroupRepository(IGroupRepository):
@@ -80,6 +80,9 @@ class GroupRepository(IGroupRepository):
 
         return tuple(groups)
 
+    def get_devices(self, group_id: GroupID):
+        pass
+
 
 class InMemoryGroupRepository(IGroupRepository):
     def __init__(self, connection: sqlite3.Connection):
@@ -150,3 +153,6 @@ class InMemoryGroupRepository(IGroupRepository):
             groups.append(group)
 
         return tuple(groups)
+
+    def get_devices(self, group_id: GroupID):
+        pass

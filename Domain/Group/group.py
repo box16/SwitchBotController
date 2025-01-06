@@ -16,6 +16,18 @@ class GroupName:
 
 
 @dataclass(frozen=True)
+class GroupID:
+    id: str
+
+    def __post_init__(self):
+        if not self.id:
+            raise GroupException("nameが空です")
+
+    def get(self):
+        return self.id
+
+
+@dataclass(frozen=True)
 class NewGroup:
     name: GroupName
     device_list: DeviceIDCollection
@@ -24,5 +36,5 @@ class NewGroup:
 # TODO ルールを内包させる
 @dataclass(frozen=True)
 class Group:
-    id: str
-    name: str
+    id: GroupID
+    name: GroupName

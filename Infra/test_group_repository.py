@@ -1,6 +1,6 @@
 import unittest
 import sqlite3
-from Domain.Group.group import NewGroup, GroupName
+from Domain.Group.group import NewGroup, GroupName, Group
 from Domain.Device.device import DeviceIDCollection, DeviceID
 from Infra.device_repository import InMemoryDeviceRepository
 from Infra.group_repository import InMemoryGroupRepository
@@ -28,3 +28,15 @@ class TestGroupRepository(unittest.TestCase):
         self.group_db.add(new_group)
         all_group = self.group_db.get_all()
         self.assertEqual(len(all_group), 1)
+
+    def test_get_devices(self):
+        new_group = NewGroup(
+            GroupName("group1"),
+            DeviceIDCollection([DeviceID(1), DeviceID(2), DeviceID(3)]),
+        )
+        self.group_db.add(new_group)
+        all_group = self.group_db.get_all()
+        group_id = all_group[0].id
+
+        devices = self.group_db.get_devices(group_id)
+        self.assertEqual(len(devices), 3)
