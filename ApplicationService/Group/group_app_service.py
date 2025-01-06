@@ -1,4 +1,9 @@
-from utility.exception import DeviceException, GroupException, CreateGroupError
+from utility.exception import (
+    DeviceException,
+    GroupException,
+    CreateGroupError,
+    ControlGroupError,
+)
 from typing import Tuple
 from Domain.Group.group_repository import IGroupRepository
 from Domain.api_gateway import ISwitchBotGateway
@@ -32,4 +37,9 @@ class GroupAppService:
         return tuple(DGroup(g.id, g.name) for g in groups)
 
     def toggle_switch(self, group_id):
-        pass
+        try:
+            devices: Tuple[DeviceID] = self.group_repository.get_devices(group_id)
+            for device in devices:
+                self.api_gateway.send_toggle_switch(device)
+        except GroupException as e:
+            raise ControlGroupError(str(e))
