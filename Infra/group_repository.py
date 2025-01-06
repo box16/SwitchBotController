@@ -76,13 +76,29 @@ class GroupRepository(IGroupRepository):
 
         groups = []
         for r in result:
-            group = Group(r[0], r[1])
+            group = Group(GroupID(r[0]), GroupName(r[1]))
             groups.append(group)
 
         return tuple(groups)
 
     def get_devices(self, group_id: GroupID):
-        pass
+        connection = sqlite3.connect(self.db_path)
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT device_id
+            FROM group_device
+            WHERE group_id = ?
+        """,
+            (group_id.get(),),
+        )
+
+        device_ids = cursor.fetchall()
+        if not device_ids:
+            raise GroupException(f"グループIDが存在しません")
+
+        return tuple(DeviceID(id) for id in device_ids)
 
 
 class InMemoryGroupRepository(IGroupRepository):
