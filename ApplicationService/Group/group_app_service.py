@@ -7,7 +7,7 @@ from utility.exception import (
 from typing import Tuple
 from Domain.Group.group_repository import IGroupRepository
 from Domain.api_gateway import ISwitchBotGateway
-from Domain.Group.group import Group, NewGroup, GroupName
+from Domain.Group.group import Group, NewGroup, GroupName, GroupID
 from Domain.Device.device import DeviceID, DeviceIDCollection
 from ApplicationService.Group.group_dto import Group as DGroup
 from ApplicationService.Group.group_command import CreateGroupCommand
@@ -34,12 +34,15 @@ class GroupAppService:
 
     def get_all(self) -> Tuple[DGroup]:
         groups: Tuple[Group] = self.group_repository.get_all()
-        return tuple(DGroup(g.id, g.name) for g in groups)
+        return tuple(DGroup(g.id.get(), g.name.get()) for g in groups)
 
     def toggle_switch(self, group_id):
         try:
-            devices: Tuple[DeviceID] = self.group_repository.get_devices(group_id)
+            # TODO : 問い合わせをここに持ってくる?
+            devices: Tuple[DeviceID] = self.group_repository.get_devices(
+                GroupID(group_id)
+            )
             for device in devices:
-                self.api_gateway.send_toggle_switch(device)
+                self.api_gateway.send_toggle_switch(device.get())
         except GroupException as e:
             raise ControlGroupError(str(e))

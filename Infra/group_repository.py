@@ -98,7 +98,7 @@ class GroupRepository(IGroupRepository):
         if not device_ids:
             raise GroupException(f"グループIDが存在しません")
 
-        return tuple(DeviceID(id) for id in device_ids)
+        return tuple(DeviceID(id[0]) for id in device_ids)
 
 
 class InMemoryGroupRepository(IGroupRepository):
@@ -187,4 +187,4 @@ class InMemoryGroupRepository(IGroupRepository):
         if not device_ids:
             raise GroupException(f"グループIDが存在しません")
 
-        return tuple(DeviceID(id) for id in device_ids)
+        return tuple(DeviceID(id[0]) for id in device_ids)

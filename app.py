@@ -49,5 +49,11 @@ def create_group():
         return redirect(url_for("index"))
 
 
+@app.route("/toggle_group/<group_id>", methods=["POST"])
+def toggle_switch_group(group_id):
+    group_app_service.toggle_switch(group_id)
+    return redirect(url_for("index"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
