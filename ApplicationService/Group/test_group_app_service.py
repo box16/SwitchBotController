@@ -1,6 +1,6 @@
 import unittest
 import sqlite3
-from utility.exception import CreateGroupError
+from utility.exception import CreateGroupError, ControlGroupError
 from ApplicationService.Group.group_app_service import GroupAppService
 from ApplicationService.Group.group_command import CreateGroupCommand
 from Infra.group_repository import InMemoryGroupRepository
@@ -55,6 +55,24 @@ class TestGroupAppService(unittest.TestCase):
 
         all_group = self.group_app_service.get_all()
         self.assertEqual(len(all_group), 0)
+
+    def test_toggle_switch_group(self):
+        command = CreateGroupCommand("group1", ["1", "2", "3"])
+        self.group_app_service.create_group(command)
+        all_group = self.group_app_service.get_all()
+        group_id = all_group[0].id
+        try:
+            self.group_app_service.toggle_switch(group_id)
+        except Exception as e:
+            assert False, f"{e}"
+
+    def test_toggle_switch_group(self):
+        command = CreateGroupCommand("group1", ["1", "2", "3"])
+        self.group_app_service.create_group(command)
+        all_group = self.group_app_service.get_all()
+        with self.assertRaises(ControlGroupError):
+            group_id = all_group[0].id + 1
+            self.group_app_service.toggle_switch(group_id)
 
 
 if __name__ == "__main__":

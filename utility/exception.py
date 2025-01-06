@@ -12,3 +12,7 @@ class DeviceNotFound(DeviceException):
 
 class CreateGroupError(GroupException):
     pass
+
+
+class ControlGroupError(GroupException):
+    pass

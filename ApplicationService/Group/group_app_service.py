@@ -30,3 +30,6 @@ class GroupAppService:
     def get_all(self) -> Tuple[DGroup]:
         groups: Tuple[Group] = self.group_repository.get_all()
         return tuple(DGroup(g.id, g.name) for g in groups)
+
+    def toggle_switch(self, group_id):
+        pass
