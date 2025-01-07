@@ -1,17 +1,19 @@
 import unittest
 from ApplicationService.Device.device_app_service import DeviceAppService
-from Infra.device_repository import InMemoryDeviceRepository
 from Infra.api_gateway import FakeSwitchBotGateway
+from Infra.device_repository import DeviceRepository
 from utility.exception import DeviceNotFound
-import sqlite3
+import os
 
 
 class TestDeviceAppService(unittest.TestCase):
     def setUp(self):
-        self.connection = sqlite3.connect(":memory:")
-        self.db = InMemoryDeviceRepository(self.connection)
+        self.db = DeviceRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
         self.api_gateway = FakeSwitchBotGateway()
         self.device_app_service = DeviceAppService(self.db, self.api_gateway)
+
+    def tearDown(self):
+        os.remove(os.getenv("SWITCHBOT_TEST_DB_PATH"))
 
     def test_get_all(self):
         self.db.add("1", "ColorLight", "Color Bulb")

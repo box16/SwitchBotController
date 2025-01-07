@@ -1,22 +1,24 @@
 import unittest
-import sqlite3
+import os
 from utility.exception import GroupException
 from Domain.Group.group import NewGroup, GroupName, GroupID, Group
 from Domain.Device.device import DeviceIDCollection, DeviceID
-from Infra.device_repository import InMemoryDeviceRepository
-from Infra.group_repository import InMemoryGroupRepository
+from Infra.device_repository import DeviceRepository
+from Infra.group_repository import GroupRepository
 from typing import Tuple
 
 
 class TestGroupRepository(unittest.TestCase):
     def setUp(self):
-        self.connection = sqlite3.connect(":memory:")
-        device_db = InMemoryDeviceRepository(self.connection)
+        device_db = DeviceRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
+        self.group_db = GroupRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
+
         device_db.add("1", "ColorLight1", "Color Bulb")
         device_db.add("2", "ColorLight2", "Color Bulb")
         device_db.add("3", "ColorLight3", "Color Bulb")
 
-        self.group_db = InMemoryGroupRepository(self.connection)
+    def tearDown(self):
+        os.remove(os.getenv("SWITCHBOT_TEST_DB_PATH"))
 
     def test_get_all_no_groups(self):
         all_group = self.group_db.get_all()

@@ -21,9 +21,12 @@ class GroupID:
 
     def __post_init__(self):
         if not self.id:
-            raise GroupException("nameが空です")
+            raise GroupException("idが空です")
 
-    def get(self):
+        if not isinstance(self.id, int):
+            raise GroupException("group_idはintで指定してください")
+
+    def get(self) -> int:
         return self.id
 
 

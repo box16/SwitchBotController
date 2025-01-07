@@ -9,10 +9,15 @@ from Infra.api_gateway import SwitchBotGateway
 from Infra.group_repository import GroupRepository
 from typing import Tuple
 from utility.exception import GroupException
+import os
 
 app = Flask(__name__)
-device_app_service = DeviceAppService(DeviceRepository(), SwitchBotGateway())
-group_app_service = GroupAppService(GroupRepository(), SwitchBotGateway())
+group_repository = GroupRepository(os.getenv("SWITCHBOT_DB_PATH"))
+device_repository = DeviceRepository(os.getenv("SWITCHBOT_DB_PATH"))
+device_app_service = DeviceAppService(device_repository, SwitchBotGateway())
+group_app_service = GroupAppService(
+    group_repository, device_repository, SwitchBotGateway()
+)
 
 
 @app.route("/", methods=["GET"])
