@@ -8,7 +8,7 @@ from typing import Tuple
 from Domain.Group.group_repository import IGroupRepository
 from Domain.api_gateway import ISwitchBotGateway
 from Domain.Group.group import Group, NewGroup, GroupName, GroupID
-from Domain.Device.device import DeviceID, DeviceIDCollection
+from Domain.Device.device import DeviceID
 from Domain.Device.device_repository import IDeviceRepository
 from ApplicationService.Group.group_dto import Group as DGroup
 from ApplicationService.Group.group_command import CreateGroupCommand
@@ -26,13 +26,16 @@ class GroupAppService:
         self.api_gateway = api_gateway
 
     def create_group(self, command: CreateGroupCommand):
-        for id in command.device_list:
+        if not command.device_ids:
+            raise CreateGroupError(f"グループが空です")
+        for id in command.device_ids:
             if not self.device_repository.is_exist(id):
                 raise CreateGroupError(f"存在しないデバイスIDが指定されています")
+
         try:
-            device_ids = tuple(DeviceID(id) for id in command.device_list)
             new_group = NewGroup(
-                GroupName(command.name), DeviceIDCollection(device_ids)
+                GroupName(command.name),
+                tuple(DeviceID(id) for id in command.device_ids),
             )
             self.group_repository.add(new_group)
         except DeviceException as e:

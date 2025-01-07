@@ -76,7 +76,7 @@ class TestGroupAppService(unittest.TestCase):
         self.group_app_service.create_group(command)
         all_group = self.group_app_service.get_all()
         with self.assertRaises(ControlGroupError):
-            group_id = GroupID(all_group[0].id + 1)
+            group_id = all_group[0].id + 1
             self.group_app_service.toggle_switch(group_id)
 
 

@@ -12,7 +12,7 @@ if not response_data.get("statusCode") == 100:
     print(f"デバイスリストの取得に失敗 statusCode:{response_data.get("statusCode")}")
     exit()
 
-device_list = response_data.get("body", {}).get("deviceList", [])
+device_ids = response_data.get("body", {}).get("deviceList", [])
 
 # 取得したデバイス一覧をDBに記録
 connection = sqlite3.connect(settings.DEVICES_DB)
@@ -30,7 +30,7 @@ cursor.execute(
     """
 )
 
-for device in device_list:
+for device in device_ids:
     try:
         # ?を使ったデータ挿入であればSQLインジェクション対策や特殊文字のエスケープもできる
         cursor.execute(

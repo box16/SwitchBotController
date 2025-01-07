@@ -59,7 +59,7 @@ class GroupRepository(IGroupRepository):
                 )
 
                 new_group_id = cursor.lastrowid
-                for device_id in new_group.device_list:
+                for device_id in new_group.device_ids:
                     cursor.execute(
                         """
                         INSERT INTO group_device (group_id,device_id)

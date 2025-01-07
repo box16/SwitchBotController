@@ -2,7 +2,7 @@ import unittest
 import os
 from utility.exception import GroupException
 from Domain.Group.group import NewGroup, GroupName, GroupID, Group
-from Domain.Device.device import DeviceIDCollection, DeviceID
+from Domain.Device.device import DeviceID
 from Infra.device_repository import DeviceRepository
 from Infra.group_repository import GroupRepository
 from typing import Tuple
@@ -27,7 +27,7 @@ class TestGroupRepository(unittest.TestCase):
     def test_get_all_one_groups(self):
         new_group = NewGroup(
             GroupName("group1"),
-            DeviceIDCollection([DeviceID(1), DeviceID(2), DeviceID(3)]),
+            tuple([DeviceID(1), DeviceID(2), DeviceID(3)]),
         )
         self.group_db.add(new_group)
         all_group = self.group_db.get_all()
@@ -36,7 +36,7 @@ class TestGroupRepository(unittest.TestCase):
     def test_get_devices(self):
         new_group = NewGroup(
             GroupName("group1"),
-            DeviceIDCollection([DeviceID(1), DeviceID(2), DeviceID(3)]),
+            tuple([DeviceID(1), DeviceID(2), DeviceID(3)]),
         )
         self.group_db.add(new_group)
         all_group: Tuple[Group] = self.group_db.get_all()
@@ -48,7 +48,7 @@ class TestGroupRepository(unittest.TestCase):
     def test_get_devices_non_existent_ID(self):
         new_group = NewGroup(
             GroupName("group1"),
-            DeviceIDCollection([DeviceID(1), DeviceID(2), DeviceID(3)]),
+            tuple([DeviceID(1), DeviceID(2), DeviceID(3)]),
         )
         self.group_db.add(new_group)
         all_group: Tuple[Group] = self.group_db.get_all()
