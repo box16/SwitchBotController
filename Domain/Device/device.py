@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from utility.exception import DeviceException
-from typing import Tuple
 
 
 @dataclass(frozen=True)

@@ -100,7 +100,13 @@ class GroupRepository(IGroupRepository):
             )
 
             device_ids = cursor.fetchall()
-        if not device_ids:
-            raise GroupException(f"グループIDが存在しません")
-
         return tuple(DeviceID(id[0]) for id in device_ids)
+
+    def is_exist(self, group_id: GroupID) -> bool:
+        with make_connection(self.db_path) as connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                "SELECT EXISTS(SELECT 1 FROM groups WHERE id=?)", (group_id.get(),)
+            )
+            is_exist = bool(cursor.fetchone()[0])
+        return is_exist

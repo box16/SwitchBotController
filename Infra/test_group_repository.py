@@ -44,15 +44,3 @@ class TestGroupRepository(unittest.TestCase):
 
         devices = self.group_db.get_devices(group_id)
         self.assertEqual(len(devices), 3)
-
-    def test_get_devices_non_existent_ID(self):
-        new_group = NewGroup(
-            GroupName("group1"),
-            tuple([DeviceID(1), DeviceID(2), DeviceID(3)]),
-        )
-        self.group_db.add(new_group)
-        all_group: Tuple[Group] = self.group_db.get_all()
-
-        with self.assertRaises(GroupException):
-            group_id = GroupID(all_group[0].id.get() + 1)
-            devices = self.group_db.get_devices(group_id)

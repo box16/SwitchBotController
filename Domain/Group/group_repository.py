@@ -16,3 +16,7 @@ class IGroupRepository(ABC):
     @abstractmethod
     def get_devices(self, group_id: GroupID) -> Tuple[DeviceID]:
         pass
+
+    @abstractmethod
+    def is_exist(self, group_id: GroupID) -> bool:
+        pass
