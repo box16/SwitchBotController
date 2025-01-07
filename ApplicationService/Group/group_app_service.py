@@ -48,7 +48,7 @@ class GroupAppService:
         try:
             # TODO : 問い合わせをここに持ってくる?
             devices: Tuple[DeviceID] = self.group_repository.get_devices(
-                GroupID(group_id)
+                GroupID(int(group_id))
             )
             for device in devices:
                 self.api_gateway.send_toggle_switch(device.get())
