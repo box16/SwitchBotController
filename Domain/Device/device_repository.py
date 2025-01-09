@@ -11,3 +11,7 @@ class IDeviceRepository(ABC):
     @abstractmethod
     def is_exist(self, device_id) -> bool:
         pass
+
+    @abstractmethod
+    def add(self) -> None:
+        pass

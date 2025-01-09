@@ -32,6 +32,7 @@ class SwitchBotGateway(ISwitchBotGateway):
         }
 
     def send_toggle_switch(self, device_id):
+        # TODO 結果出した方がいいかも
         header = self._create_header()
         data = json.dumps(
             {
