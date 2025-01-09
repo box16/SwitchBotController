@@ -31,7 +31,7 @@ def index():
     )
 
 
-@app.route("/toggle/<device_id>", methods=["POST"])
+@app.route("/device/<device_id>/toggle", methods=["POST"])
 def toggle_switch(device_id):
     device_app_service.toggle_switch(device_id)
     return redirect(url_for("index"))
@@ -54,7 +54,7 @@ def create_group():
         return redirect(url_for("index"))
 
 
-@app.route("/toggle_group/<group_id>", methods=["POST"])
+@app.route("/group/<group_id>/toggle", methods=["POST"])
 def toggle_switch_group(group_id):
     group_app_service.toggle_switch(group_id)
     return redirect(url_for("index"))
