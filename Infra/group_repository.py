@@ -6,6 +6,7 @@ from Domain.Device.device import DeviceID
 from contextlib import contextmanager
 
 
+# TODO: cursor返すほうが良いかもしれない
 @contextmanager
 def make_connection(db_path: str):
     connection = sqlite3.connect(db_path)
