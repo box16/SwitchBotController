@@ -1,4 +1,5 @@
 import unittest
+from Domain.color import Color
 from ApplicationService.Device.device_app_service import DeviceAppService
 from Infra.api_gateway import FakeSwitchBotGateway
 from Infra.device_repository import DeviceRepository
@@ -36,7 +37,11 @@ class TestDeviceAppService(unittest.TestCase):
             self.device_app_service.toggle_switch(DEVICE_ID + 1)
 
     def test_color_adjustment(self):
-        pass
+        try:
+            color = Color(100, 100, 100)
+            self.device_app_service.color_adjstment(DEVICE_ID, color)
+        except Exception as e:
+            assert False, f"{e}"
 
 
 if __name__ == "__main__":

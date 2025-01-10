@@ -1,6 +1,7 @@
 from Domain.Device.device_repository import IDeviceRepository
-from Domain.Device.device import Device
+from Domain.Device.device import Device, DeviceID
 from Domain.api_gateway import ISwitchBotGateway
+from Domain.color import Color
 from ApplicationService.Device.device_dto import Device as DDevice
 from typing import Tuple
 from utility.exception import DeviceNotFound
@@ -22,3 +23,9 @@ class DeviceAppService:
             raise DeviceNotFound()
 
         self.api_gateway.send_toggle_switch(device_id)
+
+    def color_adjstment(self, device_id: DeviceID, color: Color):
+        if not self.device_repository.is_exist(device_id):
+            raise DeviceNotFound()
+
+        self.api_gateway.send_color_adjustment(device_id, color)
