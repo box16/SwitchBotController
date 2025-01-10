@@ -61,11 +61,13 @@ def toggle_switch_group(group_id):
     return redirect(url_for("index"))
 
 
-@app.route("/device/<device_id>/color", methods=["POST"])
-def color_adjustment(device_id):
-    red = request.form.get("red", type=int)
-    green = request.form.get("green", type=int)
-    blue = request.form.get("blue", type=int)
+@app.route("/color_adjustment", methods=["POST"])
+def color_adjustment():
+    data = request.get_json()
+    device_id = data.get("device_id")
+    red = data.get("r", 0)
+    green = data.get("g", 0)
+    blue = data.get("b", 0)
     device_app_service.color_adjstment(device_id, Color(red, green, blue))
     return redirect(url_for("index"))
 
