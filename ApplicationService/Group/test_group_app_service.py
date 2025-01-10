@@ -1,7 +1,7 @@
 import unittest
 import os
 from utility.exception import CreateGroupError, ControlGroupError
-from Domain.Group.group import GroupID, Group
+from Domain.Device.device import DeviceID
 from ApplicationService.Group.group_app_service import GroupAppService
 from ApplicationService.Group.group_command import CreateGroupCommand
 from Infra.device_repository import DeviceRepository
@@ -18,9 +18,9 @@ class TestGroupAppService(unittest.TestCase):
             self.group_repository, device_repository, api_gateway
         )
 
-        device_repository.add("1", "ColorLight1", "Color Bulb")
-        device_repository.add("2", "ColorLight2", "Color Bulb")
-        device_repository.add("3", "ColorLight3", "Color Bulb")
+        device_repository.add(DeviceID(1), "ColorLight1", "Color Bulb")
+        device_repository.add(DeviceID(2), "ColorLight2", "Color Bulb")
+        device_repository.add(DeviceID(3), "ColorLight3", "Color Bulb")
 
     def tearDown(self):
         os.remove(os.getenv("SWITCHBOT_TEST_DB_PATH"))

@@ -1,5 +1,5 @@
 from Domain.Device.device_repository import IDeviceRepository
-from Domain.Device.device import Device
+from Domain.Device.device import Device, DeviceID
 from typing import Tuple
 import sqlite3
 from contextlib import contextmanager
@@ -48,18 +48,18 @@ class DeviceRepository(IDeviceRepository):
             devices.append(device)
         return tuple(devices)
 
-    def is_exist(self, device_id) -> bool:
+    def is_exist(self, device_id: DeviceID) -> bool:
         with make_connection(self.db_path) as connection:
             cursor = connection.cursor()
             # executeはパラメーターにシーケンスを要求するため、引数1つでもこのように指定する
             cursor.execute(
-                "SELECT EXISTS(SELECT 1 FROM devices WHERE id=?)", (device_id,)
+                "SELECT EXISTS(SELECT 1 FROM devices WHERE id=?)", (device_id.get(),)
             )
             # fetchone() は (0,) または (1,) のタプルを返すので、添字 [0] を取り出して bool にする
-            is_exist = bool(cursor.fetchone()[0])
-        return is_exist
+            result = bool(cursor.fetchone()[0])
+        return result
 
-    def add(self, id, name, type, enable_cloud=True, hub_device_id="0000"):
+    def add(self, id: DeviceID, name, type, enable_cloud=True, hub_device_id="0000"):
         with make_connection(self.db_path) as connection:
             cursor = connection.cursor()
             cursor.execute(
@@ -68,7 +68,7 @@ class DeviceRepository(IDeviceRepository):
                 VALUES (?, ?, ?, ?, ?)
                 """,
                 (
-                    id,
+                    id.get(),
                     name,
                     type,
                     enable_cloud,

@@ -109,5 +109,5 @@ class GroupRepository(IGroupRepository):
             cursor.execute(
                 "SELECT EXISTS(SELECT 1 FROM groups WHERE id=?)", (group_id.get(),)
             )
-            is_exist = bool(cursor.fetchone()[0])
-        return is_exist
+            result = bool(cursor.fetchone()[0])
+        return result

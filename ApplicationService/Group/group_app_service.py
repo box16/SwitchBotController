@@ -29,7 +29,7 @@ class GroupAppService:
         if not command.device_ids:
             raise CreateGroupError(f"グループが空です")
         for id in command.device_ids:
-            if not self.device_repository.is_exist(id):
+            if not self.device_repository.is_exist(DeviceID(id)):
                 raise CreateGroupError(f"存在しないデバイスIDが指定されています")
 
         try:
