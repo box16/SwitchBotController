@@ -5,6 +5,8 @@ from Infra.device_repository import DeviceRepository
 from utility.exception import DeviceNotFound
 import os
 
+DEVICE_ID = 1
+
 
 class TestDeviceAppService(unittest.TestCase):
     def setUp(self):
@@ -14,7 +16,7 @@ class TestDeviceAppService(unittest.TestCase):
             self.device_repository, self.api_gateway
         )
 
-        self.device_repository.add("1", "ColorLight", "Color Bulb")
+        self.device_repository.add(DEVICE_ID, "ColorLight", "Color Bulb")
 
     def tearDown(self):
         os.remove(os.getenv("SWITCHBOT_TEST_DB_PATH"))
@@ -25,13 +27,13 @@ class TestDeviceAppService(unittest.TestCase):
 
     def test_toggle_switch(self):
         try:
-            self.device_app_service.toggle_switch(1)
+            self.device_app_service.toggle_switch(DEVICE_ID)
         except Exception as e:
             assert False, f"{e}"
 
     def test_toggle_switch_non_existent_device(self):
         with self.assertRaises(DeviceNotFound):
-            self.device_app_service.toggle_switch(1 + 1)
+            self.device_app_service.toggle_switch(DEVICE_ID + 1)
 
     def test_color_adjustment(self):
         pass
