@@ -1,7 +1,7 @@
 from Domain.Device.device_repository import IDeviceRepository
 from Domain.Device.device import Device, DeviceID
 from typing import Tuple
-from Infra.repository_common import make_cursor
+from Infra.repository_common import make_cursor, DEVICE_TABLE
 
 
 class DeviceRepository(IDeviceRepository):
@@ -9,8 +9,8 @@ class DeviceRepository(IDeviceRepository):
         self.db_path = db_path
         with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                """
-                    CREATE TABLE IF NOT EXISTS devices (
+                f"""
+                    CREATE TABLE IF NOT EXISTS {DEVICE_TABLE} (
                         id TEXT PRIMARY KEY,
                         name TEXT NOT NULL,
                         type TEXT NOT NULL,
@@ -22,7 +22,7 @@ class DeviceRepository(IDeviceRepository):
 
     def get_all(self) -> Tuple[Device]:
         with make_cursor(self.db_path) as cursor:
-            cursor.execute("SELECT id,name,type FROM devices")
+            cursor.execute(f"SELECT id,name,type FROM {DEVICE_TABLE}")
             result = cursor.fetchall()
 
         devices = []
@@ -35,7 +35,8 @@ class DeviceRepository(IDeviceRepository):
         with make_cursor(self.db_path) as cursor:
             # executeはパラメーターにシーケンスを要求するため、引数1つでもこのように指定する
             cursor.execute(
-                "SELECT EXISTS(SELECT 1 FROM devices WHERE id=?)", (device_id.get(),)
+                f"SELECT EXISTS(SELECT 1 FROM {DEVICE_TABLE} WHERE id=?)",
+                (device_id.get(),),
             )
             # fetchone() は (0,) または (1,) のタプルを返すので、添字 [0] を取り出して bool にする
             result = bool(cursor.fetchone()[0])
@@ -51,8 +52,8 @@ class DeviceRepository(IDeviceRepository):
     ):
         with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                """
-                INSERT OR IGNORE INTO devices (id, name, type, enable_cloud_service, hub_device_id)
+                f"""
+                INSERT OR IGNORE INTO {DEVICE_TABLE} (id, name, type, enable_cloud_service, hub_device_id)
                 VALUES (?, ?, ?, ?, ?)
                 """,
                 (

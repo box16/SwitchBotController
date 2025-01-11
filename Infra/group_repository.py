@@ -3,7 +3,12 @@ import sqlite3
 from Domain.Group.group_repository import IGroupRepository
 from Domain.Group.group import Group, NewGroup, GroupID, GroupName
 from Domain.Device.device import DeviceID
-from Infra.repository_common import make_cursor
+from Infra.repository_common import (
+    make_cursor,
+    GROUP_TABLE,
+    DEVICE_TABLE,
+    GROUP_DEVICE_TABLE,
+)
 
 
 class GroupRepository(IGroupRepository):
@@ -11,20 +16,20 @@ class GroupRepository(IGroupRepository):
         self.db_path = db_path
         with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                """
-                    CREATE TABLE IF NOT EXISTS groups (
+                f"""
+                    CREATE TABLE IF NOT EXISTS {GROUP_TABLE} (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL
                     )
                 """
             )
             cursor.execute(
-                """
-                    CREATE TABLE IF NOT EXISTS group_device (
+                f"""
+                    CREATE TABLE IF NOT EXISTS {GROUP_DEVICE_TABLE} (
                         group_id  INTEGER NOT NULL,
                         device_id TEXT NOT NULL,
-                        FOREIGN KEY (group_id)  REFERENCES groups (id) ON DELETE CASCADE,
-                        FOREIGN KEY (device_id) REFERENCES devices (id) ON DELETE CASCADE,
+                        FOREIGN KEY (group_id)  REFERENCES {GROUP_TABLE} (id) ON DELETE CASCADE,
+                        FOREIGN KEY (device_id) REFERENCES {DEVICE_TABLE} (id) ON DELETE CASCADE,
                         PRIMARY KEY (group_id, device_id)
                     )
                 """
@@ -34,8 +39,8 @@ class GroupRepository(IGroupRepository):
         try:
             with make_cursor(self.db_path) as cursor:
                 cursor.execute(
-                    """
-                    INSERT INTO groups (name)
+                    f"""
+                    INSERT INTO {GROUP_TABLE} (name)
                     VALUES (?)
                     """,
                     (new_group.name.get(),),
@@ -44,8 +49,8 @@ class GroupRepository(IGroupRepository):
                 new_group_id = cursor.lastrowid
                 for device_id in new_group.device_ids:
                     cursor.execute(
-                        """
-                        INSERT INTO group_device (group_id,device_id)
+                        f"""
+                        INSERT INTO {GROUP_DEVICE_TABLE} (group_id,device_id)
                         VALUES (?,?)
                         """,
                         (
@@ -60,7 +65,7 @@ class GroupRepository(IGroupRepository):
 
     def get_all(self):
         with make_cursor(self.db_path) as cursor:
-            cursor.execute("SELECT id,name FROM groups")
+            cursor.execute(f"SELECT id,name FROM {GROUP_TABLE}")
             result = cursor.fetchall()
 
             groups = []
@@ -72,9 +77,9 @@ class GroupRepository(IGroupRepository):
     def get_devices(self, group_id: GroupID):
         with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                """
+                f"""
                 SELECT device_id
-                FROM group_device
+                FROM {GROUP_DEVICE_TABLE}
                 WHERE group_id = ?
             """,
                 (group_id.get(),),
@@ -86,7 +91,8 @@ class GroupRepository(IGroupRepository):
     def is_exist(self, group_id: GroupID) -> bool:
         with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                "SELECT EXISTS(SELECT 1 FROM groups WHERE id=?)", (group_id.get(),)
+                f"SELECT EXISTS(SELECT 1 FROM {GROUP_TABLE} WHERE id=?)",
+                (group_id.get(),),
             )
             result = bool(cursor.fetchone()[0])
         return result
