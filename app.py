@@ -68,7 +68,18 @@ def color_adjustment():
     red = data.get("r", 0)
     green = data.get("g", 0)
     blue = data.get("b", 0)
-    device_app_service.color_adjstment(device_id, Color(red, green, blue))
+    device_app_service.color_adjustment(device_id, Color(red, green, blue))
+    return redirect(url_for("index"))
+
+
+@app.route("/color_adjustment_group", methods=["POST"])
+def color_adjustment_group():
+    data = request.get_json()
+    group_id = int(data.get("group_id"))
+    red = data.get("r", 0)
+    green = data.get("g", 0)
+    blue = data.get("b", 0)
+    group_app_service.color_adjustment(group_id, Color(red, green, blue))
     return redirect(url_for("index"))
 
 

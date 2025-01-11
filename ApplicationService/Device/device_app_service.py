@@ -26,7 +26,7 @@ class DeviceAppService:
 
         self.api_gateway.send_toggle_switch(device_id)
 
-    def color_adjstment(self, _device_id: int, d_color: DColor):
+    def color_adjustment(self, _device_id: int, d_color: DColor):
         device_id = DeviceID(_device_id)
         if not self.device_repository.is_exist(device_id):
             raise DeviceNotFound()

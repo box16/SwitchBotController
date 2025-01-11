@@ -40,7 +40,7 @@ class TestDeviceAppService(unittest.TestCase):
     def test_color_adjustment(self):
         try:
             color = Color(100, 100, 100)
-            self.device_app_service.color_adjstment(ID, color)
+            self.device_app_service.color_adjustment(ID, color)
         except Exception as e:
             assert False, f"{e}"
 
