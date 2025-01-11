@@ -3,29 +3,13 @@ import sqlite3
 from Domain.Group.group_repository import IGroupRepository
 from Domain.Group.group import Group, NewGroup, GroupID, GroupName
 from Domain.Device.device import DeviceID
-from contextlib import contextmanager
-
-
-# TODO: cursor返すほうが良いかもしれない
-@contextmanager
-def make_connection(db_path: str):
-    connection = sqlite3.connect(db_path)
-    try:
-        yield connection
-    except sqlite3.IntegrityError as e:
-        connection.rollback()
-        connection.close()
-        raise e
-    finally:
-        connection.commit()
-        connection.close()
+from Infra.repository_common import make_cursor
 
 
 class GroupRepository(IGroupRepository):
     def __init__(self, db_path):
         self.db_path = db_path
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+        with make_cursor(self.db_path) as cursor:
             cursor.execute(
                 """
                     CREATE TABLE IF NOT EXISTS groups (
@@ -48,9 +32,7 @@ class GroupRepository(IGroupRepository):
 
     def add(self, new_group: NewGroup) -> None:
         try:
-            with make_connection(self.db_path) as connection:
-                cursor = connection.cursor()
-                connection.execute("BEGIN TRANSACTION")
+            with make_cursor(self.db_path) as cursor:
                 cursor.execute(
                     """
                     INSERT INTO groups (name)
@@ -77,8 +59,7 @@ class GroupRepository(IGroupRepository):
             )
 
     def get_all(self):
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+        with make_cursor(self.db_path) as cursor:
             cursor.execute("SELECT id,name FROM groups")
             result = cursor.fetchall()
 
@@ -89,8 +70,7 @@ class GroupRepository(IGroupRepository):
         return tuple(groups)
 
     def get_devices(self, group_id: GroupID):
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+        with make_cursor(self.db_path) as cursor:
             cursor.execute(
                 """
                 SELECT device_id
@@ -104,8 +84,7 @@ class GroupRepository(IGroupRepository):
         return tuple(DeviceID(id[0]) for id in device_ids)
 
     def is_exist(self, group_id: GroupID) -> bool:
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+        with make_cursor(self.db_path) as cursor:
             cursor.execute(
                 "SELECT EXISTS(SELECT 1 FROM groups WHERE id=?)", (group_id.get(),)
             )
