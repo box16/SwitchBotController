@@ -4,6 +4,7 @@ from utility.exception import CreateGroupError, ControlGroupError
 from Domain.Device.device import DeviceID
 from ApplicationService.Group.group_app_service import GroupAppService
 from ApplicationService.Group.group_command import CreateGroupCommand
+from ApplicationService.color_dto import Color
 from Infra.device_repository import DeviceRepository
 from Infra.group_repository import GroupRepository
 from Infra.api_gateway import FakeSwitchBotGateway
@@ -76,7 +77,9 @@ class TestGroupAppService(unittest.TestCase):
             self.group_app_service.toggle_switch(group_id)
 
     def test_color_adjustment(self):
-        pass
+        all_group = self.group_app_service.get_all()
+        group_id = all_group[0].id
+        self.group_app_service.color_adjustment(group_id, Color(255, 0, 0))
 
 
 if __name__ == "__main__":
