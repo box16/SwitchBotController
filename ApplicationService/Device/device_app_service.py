@@ -19,14 +19,14 @@ class DeviceAppService:
         devices: Tuple[Device] = self.device_repository.get_all()
         return tuple(DDevice(d.id, d.name, d.type) for d in devices)
 
-    def toggle_switch(self, _device_id):
+    def toggle_switch(self, _device_id: int):
         device_id = DeviceID(_device_id)
         if not self.device_repository.is_exist(device_id):
             raise DeviceNotFound()
 
         self.api_gateway.send_toggle_switch(device_id)
 
-    def color_adjstment(self, _device_id, d_color: DColor):
+    def color_adjstment(self, _device_id: int, d_color: DColor):
         device_id = DeviceID(_device_id)
         if not self.device_repository.is_exist(device_id):
             raise DeviceNotFound()

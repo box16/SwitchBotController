@@ -20,7 +20,7 @@ def make_connection(db_path: str):
 
 
 class DeviceRepository(IDeviceRepository):
-    def __init__(self, db_path):
+    def __init__(self, db_path: str):
         self.db_path = db_path
         with make_connection(self.db_path) as connection:
             cursor = connection.cursor()
@@ -59,7 +59,14 @@ class DeviceRepository(IDeviceRepository):
             result = bool(cursor.fetchone()[0])
         return result
 
-    def add(self, id: DeviceID, name, type, enable_cloud=True, hub_device_id="0000"):
+    def add(
+        self,
+        id: DeviceID,
+        name: str,
+        type: str,
+        enable_cloud: bool = True,
+        hub_device_id: str = "0000",
+    ):
         with make_connection(self.db_path) as connection:
             cursor = connection.cursor()
             cursor.execute(
