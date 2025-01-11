@@ -47,14 +47,14 @@ class GroupAppService:
         groups: Tuple[Group] = self.group_repository.get_all()
         return tuple(DGroup(g.id.get(), g.name.get()) for g in groups)
 
-    def toggle_switch(self, group_id):
+    def toggle_switch(self, group_id: int):
         try:
-            id = GroupID(int(group_id))
+            id = GroupID(group_id)
             if not self.group_repository.is_exist(id):
                 raise ControlGroupError(f"存在しないグループです")
 
             devices: Tuple[DeviceID] = self.group_repository.get_devices(id)
             for device in devices:
-                self.api_gateway.send_toggle_switch(device.get())
+                self.api_gateway.send_toggle_switch(device)
         except GroupException as e:
             raise ControlGroupError(str(e))

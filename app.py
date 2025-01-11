@@ -34,7 +34,7 @@ def index():
 
 @app.route("/device/<device_id>/toggle", methods=["POST"])
 def toggle_switch(device_id):
-    device_app_service.toggle_switch(device_id)
+    device_app_service.toggle_switch(str(device_id))
     return redirect(url_for("index"))
 
 
@@ -57,14 +57,14 @@ def create_group():
 
 @app.route("/group/<group_id>/toggle", methods=["POST"])
 def toggle_switch_group(group_id):
-    group_app_service.toggle_switch(group_id)
+    group_app_service.toggle_switch(int(group_id))
     return redirect(url_for("index"))
 
 
 @app.route("/color_adjustment", methods=["POST"])
 def color_adjustment():
     data = request.get_json()
-    device_id = data.get("device_id")
+    device_id = str(data.get("device_id"))
     red = data.get("r", 0)
     green = data.get("g", 0)
     blue = data.get("b", 0)
