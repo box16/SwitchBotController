@@ -6,6 +6,10 @@ class GroupException(Exception):
     pass
 
 
+class ColorException(Exception):
+    pass
+
+
 class DeviceNotFound(DeviceException):
     pass
 

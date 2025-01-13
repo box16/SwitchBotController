@@ -1,7 +1,6 @@
 import unittest
 import os
-from utility.exception import GroupException
-from Domain.Group.group import NewGroup, GroupName, GroupID, Group
+from Domain.Group.group import NewGroup, GroupName, Group
 from Domain.Device.device import DeviceID
 from Infra.device_repository import DeviceRepository
 from Infra.group_repository import GroupRepository
@@ -13,9 +12,9 @@ class TestGroupRepository(unittest.TestCase):
         device_db = DeviceRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
         self.group_db = GroupRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
 
-        device_db.add("1", "ColorLight1", "Color Bulb")
-        device_db.add("2", "ColorLight2", "Color Bulb")
-        device_db.add("3", "ColorLight3", "Color Bulb")
+        device_db.add(DeviceID(1), "ColorLight1", "Color Bulb")
+        device_db.add(DeviceID(2), "ColorLight2", "Color Bulb")
+        device_db.add(DeviceID(3), "ColorLight3", "Color Bulb")
 
     def tearDown(self):
         os.remove(os.getenv("SWITCHBOT_TEST_DB_PATH"))

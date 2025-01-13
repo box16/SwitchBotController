@@ -1,32 +1,16 @@
 from Domain.Device.device_repository import IDeviceRepository
-from Domain.Device.device import Device
+from Domain.Device.device import Device, DeviceID
 from typing import Tuple
-import sqlite3
-from contextlib import contextmanager
-
-
-@contextmanager
-def make_connection(db_path: str):
-    connection = sqlite3.connect(db_path)
-    try:
-        yield connection
-    except sqlite3.IntegrityError as e:
-        connection.rollback()
-        connection.close()
-        raise e
-    finally:
-        connection.commit()
-        connection.close()
+from Infra.repository_common import make_cursor, DEVICE_TABLE
 
 
 class DeviceRepository(IDeviceRepository):
-    def __init__(self, db_path):
+    def __init__(self, db_path: str):
         self.db_path = db_path
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+        with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                """
-                    CREATE TABLE IF NOT EXISTS devices (
+                f"""
+                    CREATE TABLE IF NOT EXISTS {DEVICE_TABLE} (
                         id TEXT PRIMARY KEY,
                         name TEXT NOT NULL,
                         type TEXT NOT NULL,
@@ -37,9 +21,8 @@ class DeviceRepository(IDeviceRepository):
             )
 
     def get_all(self) -> Tuple[Device]:
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
-            cursor.execute("SELECT id,name,type FROM devices")
+        with make_cursor(self.db_path) as cursor:
+            cursor.execute(f"SELECT id,name,type FROM {DEVICE_TABLE}")
             result = cursor.fetchall()
 
         devices = []
@@ -48,27 +31,33 @@ class DeviceRepository(IDeviceRepository):
             devices.append(device)
         return tuple(devices)
 
-    def is_exist(self, device_id) -> bool:
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+    def is_exist(self, device_id: DeviceID) -> bool:
+        with make_cursor(self.db_path) as cursor:
             # executeはパラメーターにシーケンスを要求するため、引数1つでもこのように指定する
             cursor.execute(
-                "SELECT EXISTS(SELECT 1 FROM devices WHERE id=?)", (device_id,)
+                f"SELECT EXISTS(SELECT 1 FROM {DEVICE_TABLE} WHERE id=?)",
+                (device_id.get(),),
             )
             # fetchone() は (0,) または (1,) のタプルを返すので、添字 [0] を取り出して bool にする
-            is_exist = bool(cursor.fetchone()[0])
-        return is_exist
+            result = bool(cursor.fetchone()[0])
+        return result
 
-    def add(self, id, name, type, enable_cloud=True, hub_device_id="0000"):
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+    def add(
+        self,
+        id: DeviceID,
+        name: str,
+        type: str,
+        enable_cloud: bool = True,
+        hub_device_id: str = "0000",
+    ):
+        with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                """
-                INSERT OR IGNORE INTO devices (id, name, type, enable_cloud_service, hub_device_id)
+                f"""
+                INSERT OR IGNORE INTO {DEVICE_TABLE} (id, name, type, enable_cloud_service, hub_device_id)
                 VALUES (?, ?, ?, ?, ?)
                 """,
                 (
-                    id,
+                    id.get(),
                     name,
                     type,
                     enable_cloud,

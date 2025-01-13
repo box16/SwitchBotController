@@ -7,6 +7,8 @@ import os
 import json
 import requests
 from Domain.api_gateway import ISwitchBotGateway
+from Domain.Device.device import DeviceID
+from Domain.color import Color
 
 
 class SwitchBotGateway(ISwitchBotGateway):
@@ -31,7 +33,7 @@ class SwitchBotGateway(ISwitchBotGateway):
             "nonce": str(nonce),
         }
 
-    def send_toggle_switch(self, device_id):
+    def send_toggle_switch(self, device_id: DeviceID):
         # TODO 結果出した方がいいかも
         header = self._create_header()
         data = json.dumps(
@@ -43,12 +45,30 @@ class SwitchBotGateway(ISwitchBotGateway):
         )
 
         requests.post(
-            f"https://api.switch-bot.com/v1.1/devices/{device_id}/commands",
+            f"https://api.switch-bot.com/v1.1/devices/{device_id.get()}/commands",
+            headers=header,
+            data=data,
+        )
+
+    def send_color_adjustment(self, device_id: DeviceID, color: Color):
+        header = self._create_header()
+        data = json.dumps(
+            {
+                "commandType": "command",
+                "command": "setColor",
+                "parameter": f"{color.red.get()}:{color.green.get()}:{color.blue.get()}",
+            }
+        )
+        requests.post(
+            f"https://api.switch-bot.com/v1.1/devices/{device_id.get()}/commands",
             headers=header,
             data=data,
         )
 
 
 class FakeSwitchBotGateway(ISwitchBotGateway):
-    def send_toggle_switch(self, device_id):
+    def send_toggle_switch(self, device_id: DeviceID):
+        pass
+
+    def send_color_adjustment(self, device_id: DeviceID, color: Color):
         pass

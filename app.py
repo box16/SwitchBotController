@@ -4,6 +4,7 @@ from ApplicationService.Device.device_dto import Device
 from ApplicationService.Group.group_app_service import GroupAppService
 from ApplicationService.Group.group_dto import Group
 from ApplicationService.Group.group_command import CreateGroupCommand
+from ApplicationService.color_dto import Color
 from Infra.device_repository import DeviceRepository
 from Infra.api_gateway import SwitchBotGateway
 from Infra.group_repository import GroupRepository
@@ -33,7 +34,7 @@ def index():
 
 @app.route("/device/<device_id>/toggle", methods=["POST"])
 def toggle_switch(device_id):
-    device_app_service.toggle_switch(device_id)
+    device_app_service.toggle_switch(str(device_id))
     return redirect(url_for("index"))
 
 
@@ -56,7 +57,29 @@ def create_group():
 
 @app.route("/group/<group_id>/toggle", methods=["POST"])
 def toggle_switch_group(group_id):
-    group_app_service.toggle_switch(group_id)
+    group_app_service.toggle_switch(int(group_id))
+    return redirect(url_for("index"))
+
+
+@app.route("/color_adjustment", methods=["POST"])
+def color_adjustment():
+    data = request.get_json()
+    device_id = str(data.get("device_id"))
+    red = data.get("r", 0)
+    green = data.get("g", 0)
+    blue = data.get("b", 0)
+    device_app_service.color_adjustment(device_id, Color(red, green, blue))
+    return redirect(url_for("index"))
+
+
+@app.route("/color_adjustment_group", methods=["POST"])
+def color_adjustment_group():
+    data = request.get_json()
+    group_id = int(data.get("group_id"))
+    red = data.get("r", 0)
+    green = data.get("g", 0)
+    blue = data.get("b", 0)
+    group_app_service.color_adjustment(group_id, Color(red, green, blue))
     return redirect(url_for("index"))
 
 

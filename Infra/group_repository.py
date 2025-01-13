@@ -3,44 +3,33 @@ import sqlite3
 from Domain.Group.group_repository import IGroupRepository
 from Domain.Group.group import Group, NewGroup, GroupID, GroupName
 from Domain.Device.device import DeviceID
-from contextlib import contextmanager
-
-
-# TODO: cursor返すほうが良いかもしれない
-@contextmanager
-def make_connection(db_path: str):
-    connection = sqlite3.connect(db_path)
-    try:
-        yield connection
-    except sqlite3.IntegrityError as e:
-        connection.rollback()
-        connection.close()
-        raise e
-    finally:
-        connection.commit()
-        connection.close()
+from Infra.repository_common import (
+    make_cursor,
+    GROUP_TABLE,
+    DEVICE_TABLE,
+    GROUP_DEVICE_TABLE,
+)
 
 
 class GroupRepository(IGroupRepository):
     def __init__(self, db_path):
         self.db_path = db_path
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+        with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                """
-                    CREATE TABLE IF NOT EXISTS groups (
+                f"""
+                    CREATE TABLE IF NOT EXISTS {GROUP_TABLE} (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL
                     )
                 """
             )
             cursor.execute(
-                """
-                    CREATE TABLE IF NOT EXISTS group_device (
+                f"""
+                    CREATE TABLE IF NOT EXISTS {GROUP_DEVICE_TABLE} (
                         group_id  INTEGER NOT NULL,
                         device_id TEXT NOT NULL,
-                        FOREIGN KEY (group_id)  REFERENCES groups (id) ON DELETE CASCADE,
-                        FOREIGN KEY (device_id) REFERENCES devices (id) ON DELETE CASCADE,
+                        FOREIGN KEY (group_id)  REFERENCES {GROUP_TABLE} (id) ON DELETE CASCADE,
+                        FOREIGN KEY (device_id) REFERENCES {DEVICE_TABLE} (id) ON DELETE CASCADE,
                         PRIMARY KEY (group_id, device_id)
                     )
                 """
@@ -48,12 +37,10 @@ class GroupRepository(IGroupRepository):
 
     def add(self, new_group: NewGroup) -> None:
         try:
-            with make_connection(self.db_path) as connection:
-                cursor = connection.cursor()
-                connection.execute("BEGIN TRANSACTION")
+            with make_cursor(self.db_path) as cursor:
                 cursor.execute(
-                    """
-                    INSERT INTO groups (name)
+                    f"""
+                    INSERT INTO {GROUP_TABLE} (name)
                     VALUES (?)
                     """,
                     (new_group.name.get(),),
@@ -62,8 +49,8 @@ class GroupRepository(IGroupRepository):
                 new_group_id = cursor.lastrowid
                 for device_id in new_group.device_ids:
                     cursor.execute(
-                        """
-                        INSERT INTO group_device (group_id,device_id)
+                        f"""
+                        INSERT INTO {GROUP_DEVICE_TABLE} (group_id,device_id)
                         VALUES (?,?)
                         """,
                         (
@@ -77,9 +64,8 @@ class GroupRepository(IGroupRepository):
             )
 
     def get_all(self):
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
-            cursor.execute("SELECT id,name FROM groups")
+        with make_cursor(self.db_path) as cursor:
+            cursor.execute(f"SELECT id,name FROM {GROUP_TABLE}")
             result = cursor.fetchall()
 
             groups = []
@@ -89,12 +75,11 @@ class GroupRepository(IGroupRepository):
         return tuple(groups)
 
     def get_devices(self, group_id: GroupID):
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+        with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                """
+                f"""
                 SELECT device_id
-                FROM group_device
+                FROM {GROUP_DEVICE_TABLE}
                 WHERE group_id = ?
             """,
                 (group_id.get(),),
@@ -104,10 +89,10 @@ class GroupRepository(IGroupRepository):
         return tuple(DeviceID(id[0]) for id in device_ids)
 
     def is_exist(self, group_id: GroupID) -> bool:
-        with make_connection(self.db_path) as connection:
-            cursor = connection.cursor()
+        with make_cursor(self.db_path) as cursor:
             cursor.execute(
-                "SELECT EXISTS(SELECT 1 FROM groups WHERE id=?)", (group_id.get(),)
+                f"SELECT EXISTS(SELECT 1 FROM {GROUP_TABLE} WHERE id=?)",
+                (group_id.get(),),
             )
-            is_exist = bool(cursor.fetchone()[0])
-        return is_exist
+            result = bool(cursor.fetchone()[0])
+        return result

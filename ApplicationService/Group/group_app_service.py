@@ -10,8 +10,10 @@ from Domain.api_gateway import ISwitchBotGateway
 from Domain.Group.group import Group, NewGroup, GroupName, GroupID
 from Domain.Device.device import DeviceID
 from Domain.Device.device_repository import IDeviceRepository
+from Domain.color import Color
 from ApplicationService.Group.group_dto import Group as DGroup
 from ApplicationService.Group.group_command import CreateGroupCommand
+from ApplicationService.color_dto import Color as DColor
 
 
 class GroupAppService:
@@ -29,7 +31,7 @@ class GroupAppService:
         if not command.device_ids:
             raise CreateGroupError(f"グループが空です")
         for id in command.device_ids:
-            if not self.device_repository.is_exist(id):
+            if not self.device_repository.is_exist(DeviceID(id)):
                 raise CreateGroupError(f"存在しないデバイスIDが指定されています")
 
         try:
@@ -47,14 +49,27 @@ class GroupAppService:
         groups: Tuple[Group] = self.group_repository.get_all()
         return tuple(DGroup(g.id.get(), g.name.get()) for g in groups)
 
-    def toggle_switch(self, group_id):
+    def toggle_switch(self, group_id: int):
         try:
-            id = GroupID(int(group_id))
+            id = GroupID(group_id)
             if not self.group_repository.is_exist(id):
                 raise ControlGroupError(f"存在しないグループです")
 
             devices: Tuple[DeviceID] = self.group_repository.get_devices(id)
             for device in devices:
-                self.api_gateway.send_toggle_switch(device.get())
+                self.api_gateway.send_toggle_switch(device)
+        except GroupException as e:
+            raise ControlGroupError(str(e))
+
+    def color_adjustment(self, group_id: int, _color: DColor):
+        try:
+            id = GroupID(group_id)
+            if not self.group_repository.is_exist(id):
+                raise ControlGroupError(f"存在しないグループです")
+
+            devices: Tuple[DeviceID] = self.group_repository.get_devices(id)
+            color: Color = Color(_color.red, _color.green, _color.blue)
+            for device in devices:
+                self.api_gateway.send_color_adjustment(device, color)
         except GroupException as e:
             raise ControlGroupError(str(e))

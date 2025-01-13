@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Domain.Device.device import Device
+from Domain.Device.device import Device, DeviceID
 from typing import Tuple
 
 
@@ -9,7 +9,7 @@ class IDeviceRepository(ABC):
         pass
 
     @abstractmethod
-    def is_exist(self, device_id) -> bool:
+    def is_exist(self, device_id: DeviceID) -> bool:
         pass
 
     @abstractmethod
