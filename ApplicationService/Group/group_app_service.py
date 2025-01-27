@@ -10,7 +10,7 @@ from Domain.api_gateway import ISwitchBotGateway
 from Domain.Group.group import Group, NewGroup, GroupName, GroupID
 from Domain.Device.device import DeviceID
 from Domain.Device.device_repository import IDeviceRepository
-from Domain.color import Color
+from Domain.Device.light import Color
 from ApplicationService.Group.group_dto import Group as DGroup
 from ApplicationService.Group.group_command import CreateGroupCommand
 from ApplicationService.color_dto import Color as DColor

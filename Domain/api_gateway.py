@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from Domain.Device.device import DeviceID
-from Domain.color import Color
+from Domain.Device.light import Color
 
 
 class ISwitchBotGateway(ABC):

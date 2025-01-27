@@ -1,7 +1,7 @@
 from Domain.Device.device_repository import IDeviceRepository
 from Domain.Device.device import Device, DeviceID
+from Domain.Device.light import Color
 from Domain.api_gateway import ISwitchBotGateway
-from Domain.color import Color
 from ApplicationService.Device.device_dto import Device as DDevice
 from ApplicationService.color_dto import Color as DColor
 from typing import Tuple

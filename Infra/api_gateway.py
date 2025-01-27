@@ -8,7 +8,7 @@ import json
 import requests
 from Domain.api_gateway import ISwitchBotGateway
 from Domain.Device.device import DeviceID
-from Domain.color import Color
+from Domain.Device.light import Color
 
 
 class SwitchBotGateway(ISwitchBotGateway):

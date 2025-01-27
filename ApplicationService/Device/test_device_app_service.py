@@ -1,5 +1,5 @@
 import unittest
-from Domain.color import Color
+from Domain.Device.light import Color
 from Domain.Device.device import DeviceID
 from ApplicationService.Device.device_app_service import DeviceAppService
 from Infra.api_gateway import FakeSwitchBotGateway
