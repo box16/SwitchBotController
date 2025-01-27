@@ -24,7 +24,6 @@
     <table>
         <thead>
             <tr>
-                <th>id</th>
                 <th>name</th>
                 <th>type</th>
                 <th>コマンド</th>
@@ -33,7 +32,6 @@
         <tbody>
             {% for device in devices %}
             <tr>
-                <td>{{ device.id }}</td>
                 <td>{{ device.name }}</td>
                 <td>{{ device.type }}</td>
                 <td>
@@ -83,7 +81,6 @@
     <table>
         <thead>
             <tr>
-                <th>id</th>
                 <th>name</th>
                 <th>コマンド</th>
             </tr>
@@ -91,7 +88,6 @@
         <tbody>
             {% for group in groups %}
             <tr>
-                <td>{{ group.id }}</td>
                 <td>{{ group.name }}</td>
                 <td>
                     <form action="{{ url_for('toggle_switch_group', group_id=group.id) }}" method="post" style="display:inline;">
