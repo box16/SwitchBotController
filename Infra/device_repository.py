@@ -1,7 +1,9 @@
 from Domain.Device.device_repository import IDeviceRepository
 from Domain.Device.device import Device, DeviceID
+from Domain.Device.device_factory import create_device
 from typing import Tuple
 from Infra.repository_common import make_cursor, DEVICE_TABLE
+from utility.exception import DeviceException
 
 
 class DeviceRepository(IDeviceRepository):
@@ -27,8 +29,11 @@ class DeviceRepository(IDeviceRepository):
 
         devices = []
         for r in result:
-            device = Device(r[0], r[1], r[2])
-            devices.append(device)
+            try:
+                device = create_device(r[0], r[1], r[2])
+                devices.append(device)
+            except DeviceException as e:
+                pass
         return tuple(devices)
 
     def is_exist(self, device_id: DeviceID) -> bool:

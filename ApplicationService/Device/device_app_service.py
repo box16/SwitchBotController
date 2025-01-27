@@ -17,9 +17,7 @@ class DeviceAppService:
 
     def get_all(self) -> Tuple[DDevice]:
         devices: Tuple[Device] = self.device_repository.get_all()
-        # TODO : 暫定対応のため見直し
-        is_light = lambda x: (x == "Color Bulb") or (x == "Strip Light")
-        return tuple(DDevice(d.id, d.name, d.type) for d in devices if is_light(d.type))
+        return tuple(DDevice(d.id.get(), d.name.get(), d.type.name) for d in devices)
 
     def toggle_switch(self, _device_id: str):
         device_id = DeviceID(_device_id)
