@@ -8,7 +8,7 @@ import json
 import requests
 from Domain.api_gateway import ISwitchBotGateway
 from Domain.Device.device import DeviceID
-from Domain.Device.light import Color
+from Domain.Device.light import Color, Brightness, ColorTemperature
 
 
 class SwitchBotGateway(ISwitchBotGateway):
@@ -57,6 +57,36 @@ class SwitchBotGateway(ISwitchBotGateway):
                 "commandType": "command",
                 "command": "setColor",
                 "parameter": f"{color.red.get()}:{color.green.get()}:{color.blue.get()}",
+            }
+        )
+        requests.post(
+            f"https://api.switch-bot.com/v1.1/devices/{device_id.get()}/commands",
+            headers=header,
+            data=data,
+        )
+
+    def send_white_control(
+        self, device_id: DeviceID, brightness: Brightness, color_temp: ColorTemperature
+    ):
+        header = self._create_header()
+        data = json.dumps(
+            {
+                "commandType": "command",
+                "command": "setBrightness",
+                "parameter": f"{brightness.get()}",
+            }
+        )
+        requests.post(
+            f"https://api.switch-bot.com/v1.1/devices/{device_id.get()}/commands",
+            headers=header,
+            data=data,
+        )
+
+        data = json.dumps(
+            {
+                "commandType": "command",
+                "command": "setColorTemperature",
+                "parameter": f"{color_temp.get()}",
             }
         )
         requests.post(
