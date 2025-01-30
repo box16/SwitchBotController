@@ -9,7 +9,9 @@ class ISwitchBotGateway(ABC):
         pass
 
     @abstractmethod
-    def send_color_adjustment(self, device_id: DeviceID, color: Color):
+    def send_color_control(
+        self, device_id: DeviceID, color: Color, brightness: Brightness
+    ):
         pass
 
     @abstractmethod

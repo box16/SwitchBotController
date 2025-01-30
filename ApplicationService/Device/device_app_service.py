@@ -41,9 +41,17 @@ class DeviceAppService:
         color_temp = ColorTemperature(int(_color_temp))
         self.api_gateway.send_white_control(device_id, brightness, color_temp)
 
-    def color_adjustment(self, _device_id: Union[str, int], d_color: DColor):
+    def color_control(
+        self, _device_id: Union[str, int], d_color: DColor, _brightness: str
+    ):
         device_id = DeviceID(_device_id)
         if not self.device_repository.is_exist(device_id):
             raise DeviceNotFound()
+
+        device = self.device_repository.get_by_id(device_id)
+        if not (device.type == DeviceType.LIGHT):
+            raise DeviceNotFound(f"LIGHTではありません")
+
         color = Color(d_color.red, d_color.green, d_color.blue)
-        self.api_gateway.send_color_adjustment(device_id, color)
+        brightness = Brightness(int(_brightness))
+        self.api_gateway.send_color_control(device_id, color, brightness)

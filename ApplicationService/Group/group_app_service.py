@@ -70,6 +70,6 @@ class GroupAppService:
             devices: Tuple[DeviceID] = self.group_repository.get_devices(id)
             color: Color = Color(_color.red, _color.green, _color.blue)
             for device in devices:
-                self.api_gateway.send_color_adjustment(device, color)
+                self.api_gateway.send_color_control(device, color)
         except GroupException as e:
             raise ControlGroupError(str(e))

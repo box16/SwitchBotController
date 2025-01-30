@@ -61,7 +61,7 @@ def color_control(device_id):
         b = int(color_hex[5:7], 16)
     else:
         r, g, b = 255, 255, 255
-    print((r, g, b), brightness)
+    device_app_service.color_control(device_id, Color(r, g, b), brightness)
     return render_template("light.html", device_id=device_id)
 
 
