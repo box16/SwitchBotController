@@ -32,10 +32,31 @@ def index():
     )
 
 
-@app.route("/device/<device_id>/toggle", methods=["POST"])
+@app.route("/light/<device_id>/toggle", methods=["POST"])
 def toggle_switch(device_id):
     device_app_service.toggle_switch(str(device_id))
     return redirect(url_for("index"))
+
+
+@app.route("/light/<device_id>/detail", methods=["GET"])
+def detail_setting(device_id):
+    return render_template("light.html", device_id=device_id)
+
+
+@app.route("/light/<device_id>/white", methods=["POST"])
+def white_control(device_id):
+    print(device_id)
+    print(request.form.get("white_brightness"))
+    print(request.form.get("color_temp"))
+    return render_template("light.html", device_id=device_id)
+
+
+@app.route("/light/<device_id>/color", methods=["POST"])
+def color_control(device_id):
+    print(device_id)
+    print(request.form.get("color_picker"))
+    print(request.form.get("color_brightness"))
+    return render_template("light.html", device_id=device_id)
 
 
 @app.route("/create_group", methods=["GET", "POST"])
