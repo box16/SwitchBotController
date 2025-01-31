@@ -66,6 +66,13 @@ def color_control(device_id):
     return render_template("light.html", device_id=device_id)
 
 
+@app.route("/device/<device_id>/change_name", methods=["POST"])
+def change_name(device_id):
+    new_name = request.form.get("device_name")
+    device_app_service.change_name(device_id, new_name)
+    return redirect(url_for("index"))
+
+
 @app.route("/create_group", methods=["GET", "POST"])
 def create_group():
     if request.method == "GET":

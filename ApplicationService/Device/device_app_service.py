@@ -1,5 +1,5 @@
 from Domain.Device.device_repository import IDeviceRepository
-from Domain.Device.device import Device, DeviceID, DeviceType
+from Domain.Device.device import Device, DeviceID, DeviceType, DeviceName
 from Domain.Device.light import Color, Brightness, ColorTemperature
 from Domain.api_gateway import ISwitchBotGateway
 from ApplicationService.Device.device_dto import Device as DDevice
@@ -58,3 +58,10 @@ class DeviceAppService:
         color = Color(d_color.red, d_color.green, d_color.blue)
         brightness = Brightness(_brightness)
         self.api_gateway.send_color_control(device_id, color, brightness)
+
+    def change_name(self, _device_id: Union[int, str], new_name: str):
+        device_id = DeviceID(_device_id)
+        if not self.device_repository.is_exist(device_id):
+            raise DeviceNotFound()
+
+        self.device_repository.change_name(device_id, DeviceName(new_name))

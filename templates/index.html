@@ -32,7 +32,12 @@
         <tbody>
             {% for device in devices %}
             <tr>
-                <td>{{ device.name }}</td>
+                <td>
+                    <form action="{{ url_for('change_name', device_id=device.id) }}" method="post" style="display:inline;">
+                        <input type="text" value="{{ device.name }}" name="device_name">
+                        <button type="submit"> 名前変更 </button>
+                    </form>
+                </td>
                 <td>{{ device.type }}</td>
                 <td>
                     <!-- TODO : タイプによって表示内容切り替えたい -->
