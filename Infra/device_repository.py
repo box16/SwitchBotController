@@ -1,5 +1,5 @@
 from Domain.Device.device_repository import IDeviceRepository
-from Domain.Device.device import Device, DeviceID, DeviceType
+from Domain.Device.device import Device, DeviceID, DeviceName
 from Domain.Device.device_factory import create_device
 from typing import Tuple
 from Infra.repository_common import make_cursor, DEVICE_TABLE
@@ -78,3 +78,14 @@ class DeviceRepository(IDeviceRepository):
             )
             result = cursor.fetchone()
         return create_device(result[0], result[1], result[2])
+
+    def change_name(self, device_id: DeviceID, device_name: DeviceName) -> Device:
+        with make_cursor(self.db_path) as cursor:
+            cursor.execute(
+                f"UPDATE {DEVICE_TABLE} SET name = ? WHERE id=?",
+                (
+                    device_name.get(),
+                    device_id.get(),
+                ),
+            )
+            pass
