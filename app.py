@@ -32,9 +32,44 @@ def index():
     )
 
 
-@app.route("/device/<device_id>/toggle", methods=["POST"])
+@app.route("/light/<device_id>/toggle", methods=["POST"])
 def toggle_switch(device_id):
     device_app_service.toggle_switch(str(device_id))
+    return redirect(url_for("index"))
+
+
+@app.route("/light/<device_id>/detail", methods=["GET"])
+def detail_setting(device_id):
+    return render_template("light.html", device_id=device_id)
+
+
+@app.route("/light/<device_id>/white", methods=["POST"])
+def white_control(device_id):
+    brightness = request.form.get("white_brightness")
+    color_temp = request.form.get("color_temp")
+    device_app_service.white_control(device_id, brightness, color_temp)
+    return render_template("light.html", device_id=device_id)
+
+
+@app.route("/light/<device_id>/color", methods=["POST"])
+def color_control(device_id):
+    color_hex = request.form.get("color_picker")
+    brightness = request.form.get("color_brightness")
+    # TODO : これ何とかしたい
+    if color_hex and color_hex.startswith("#") and len(color_hex) == 7:
+        r = int(color_hex[1:3], 16)
+        g = int(color_hex[3:5], 16)
+        b = int(color_hex[5:7], 16)
+    else:
+        r, g, b = 255, 255, 255
+    device_app_service.color_control(device_id, Color(r, g, b), brightness)
+    return render_template("light.html", device_id=device_id)
+
+
+@app.route("/device/<device_id>/change_name", methods=["POST"])
+def change_name(device_id):
+    new_name = request.form.get("device_name")
+    device_app_service.change_name(device_id, new_name)
     return redirect(url_for("index"))
 
 
@@ -58,17 +93,6 @@ def create_group():
 @app.route("/group/<group_id>/toggle", methods=["POST"])
 def toggle_switch_group(group_id):
     group_app_service.toggle_switch(int(group_id))
-    return redirect(url_for("index"))
-
-
-@app.route("/color_adjustment", methods=["POST"])
-def color_adjustment():
-    data = request.get_json()
-    device_id = str(data.get("device_id"))
-    red = data.get("r", 0)
-    green = data.get("g", 0)
-    blue = data.get("b", 0)
-    device_app_service.color_adjustment(device_id, Color(red, green, blue))
     return redirect(url_for("index"))
 
 

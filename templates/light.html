@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ライトコントロール</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .tab-container {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #ddd;
+            border: 1px solid #aaa;
+            border-bottom: none;
+        }
+        .tab.active {
+            background: #fff;
+            font-weight: bold;
+        }
+        .content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #aaa;
+        }
+        .content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tab-container">
+        <div class="tab active" onclick="switchTab(0)">ホワイト</div>
+        <div class="tab" onclick="switchTab(1)">カラー</div>
+    </div>
+
+    <!-- デバイスの現在の状態を取得して表示してあげた方がいいかも -->
+    <div id="white" class="content active">
+      <form method="POST" action="{{ url_for('white_control', device_id=device_id) }}">
+        <input type="hidden" name="device_id" value="{{ device_id }}">
+        <div class="form-group">
+            <label for="white_brightness">明るさ</label>
+            <div class="slider-container">
+                <input type="range" id="white_brightness" name="white_brightness"
+                       min="0" max="100" value="50"
+                       oninput="updateValue('white_brightness_value', this.value)">
+                <span id="white_brightness_value">50</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="color_temp">色温度</label>
+            <div class="slider-container">
+                <input type="range" id="color_temp" name="color_temp"
+                       min="2700" max="6500" value="4700"
+                       oninput="updateValue('color_temp_value', this.value)">
+                <span id="color_temp_value">4700</span>
+            </div>
+        </div>
+        <button type="submit">送信</button>
+      </form>
+    </div>
+
+    <div id="color" class="content">
+      <form method="POST" action="{{ url_for('color_control', device_id=device_id) }}">
+        <input type="hidden" name="device_id" value="{{ device_id }}">
+        <div class="form-group">
+            <label for="color_picker">カラーピッカー</label>
+            <input type="color" id="color_picker" name="color_picker" value="#ff0000">
+        </div>
+        <div class="form-group">
+            <label for="color_brightness">明るさ</label>
+            <div class="slider-container">
+                <input type="range" id="color_brightness" name="color_brightness"
+                       min="0" max="100" value="50"
+                       oninput="updateValue('color_brightness_value', this.value)">
+                <span id="color_brightness_value">50</span>
+            </div>
+        </div>
+        <button type="submit">送信</button>
+      </form>
+    </div>
+
+    <form method="GET" action="{{ url_for('index')}}">
+        <button type="submit">戻る</button>
+    </form>
+
+    <script>
+        function switchTab(tabIndex) {
+            const tabs = document.querySelectorAll(".tab");
+            const contents = document.querySelectorAll(".content");
+
+            tabs.forEach((tab, index) => {
+                tab.classList.toggle("active", index === tabIndex);
+                contents[index].classList.toggle("active", index === tabIndex);
+            });
+        }
+
+        function updateValue(elementId, value) {
+            document.getElementById(elementId).textContent = value;
+        }
+    </script>
+
+</body>
+</html>

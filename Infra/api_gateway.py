@@ -8,7 +8,7 @@ import json
 import requests
 from Domain.api_gateway import ISwitchBotGateway
 from Domain.Device.device import DeviceID
-from Domain.color import Color
+from Domain.Device.light import Color, Brightness, ColorTemperature
 
 
 class SwitchBotGateway(ISwitchBotGateway):
@@ -50,7 +50,10 @@ class SwitchBotGateway(ISwitchBotGateway):
             data=data,
         )
 
-    def send_color_adjustment(self, device_id: DeviceID, color: Color):
+    def send_color_control(
+        self, device_id: DeviceID, color: Color, brightness: Brightness
+    ):
+        # TODO : 変更がないときは送らないというようなことを実現したい
         header = self._create_header()
         data = json.dumps(
             {
@@ -65,10 +68,60 @@ class SwitchBotGateway(ISwitchBotGateway):
             data=data,
         )
 
+        data = json.dumps(
+            {
+                "commandType": "command",
+                "command": "setBrightness",
+                "parameter": f"{brightness.get()}",
+            }
+        )
+        requests.post(
+            f"https://api.switch-bot.com/v1.1/devices/{device_id.get()}/commands",
+            headers=header,
+            data=data,
+        )
+
+    def send_white_control(
+        self, device_id: DeviceID, brightness: Brightness, color_temp: ColorTemperature
+    ):
+        header = self._create_header()
+        data = json.dumps(
+            {
+                "commandType": "command",
+                "command": "setBrightness",
+                "parameter": f"{brightness.get()}",
+            }
+        )
+        requests.post(
+            f"https://api.switch-bot.com/v1.1/devices/{device_id.get()}/commands",
+            headers=header,
+            data=data,
+        )
+
+        data = json.dumps(
+            {
+                "commandType": "command",
+                "command": "setColorTemperature",
+                "parameter": f"{color_temp.get()}",
+            }
+        )
+        requests.post(
+            f"https://api.switch-bot.com/v1.1/devices/{device_id.get()}/commands",
+            headers=header,
+            data=data,
+        )
+
 
 class FakeSwitchBotGateway(ISwitchBotGateway):
     def send_toggle_switch(self, device_id: DeviceID):
         pass
 
-    def send_color_adjustment(self, device_id: DeviceID, color: Color):
+    def send_color_control(
+        self, device_id: DeviceID, color: Color, brightness: Brightness
+    ):
+        pass
+
+    def send_white_control(
+        self, device_id: DeviceID, brightness: Brightness, color_temp: ColorTemperature
+    ):
         pass

@@ -14,6 +14,10 @@ class DeviceNotFound(DeviceException):
     pass
 
 
+class LightException(DeviceException):
+    pass
+
+
 class CreateGroupError(GroupException):
     pass
 
