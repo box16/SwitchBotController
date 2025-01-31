@@ -1,5 +1,5 @@
 import unittest
-from Domain.Device.light import Color
+from Domain.Device.light import Color, Brightness
 from Domain.Device.device import DeviceID
 from ApplicationService.Device.device_app_service import DeviceAppService
 from Infra.api_gateway import FakeSwitchBotGateway
@@ -40,7 +40,8 @@ class TestDeviceAppService(unittest.TestCase):
     def test_color_adjustment(self):
         try:
             color = Color(100, 100, 100)
-            self.device_app_service.color_adjustment(ID, color)
+            brightness = 100
+            self.device_app_service.color_control(ID, color, brightness)
         except Exception as e:
             assert False, f"{e}"
 

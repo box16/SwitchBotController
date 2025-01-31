@@ -44,8 +44,11 @@ class Brightness:
     def __post_init__(self):
         if not self.value:
             raise LightException("空です")
+        if isinstance(self.value, str):
+            tmp = int(self.value)
+            object.__setattr__(self, "value", tmp)
         if not isinstance(self.value, int):
-            raise LightException("intで指定してください")
+            raise LightException("intかstrで指定してください")
         if (self.value < 0) or (self.value > 100):
             raise LightException(f"明るさは0~100の範囲です : {self.value}")
 

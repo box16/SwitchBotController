@@ -116,5 +116,12 @@ class FakeSwitchBotGateway(ISwitchBotGateway):
     def send_toggle_switch(self, device_id: DeviceID):
         pass
 
-    def send_color_control(self, device_id: DeviceID, color: Color):
+    def send_color_control(
+        self, device_id: DeviceID, color: Color, brightness: Brightness
+    ):
+        pass
+
+    def send_white_control(
+        self, device_id: DeviceID, brightness: Brightness, color_temp: ColorTemperature
+    ):
         pass

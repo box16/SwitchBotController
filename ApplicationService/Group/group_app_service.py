@@ -10,7 +10,7 @@ from Domain.api_gateway import ISwitchBotGateway
 from Domain.Group.group import Group, NewGroup, GroupName, GroupID
 from Domain.Device.device import DeviceID
 from Domain.Device.device_repository import IDeviceRepository
-from Domain.Device.light import Color
+from Domain.Device.light import Color, Brightness
 from ApplicationService.Group.group_dto import Group as DGroup
 from ApplicationService.Group.group_command import CreateGroupCommand
 from ApplicationService.color_dto import Color as DColor
@@ -69,7 +69,8 @@ class GroupAppService:
 
             devices: Tuple[DeviceID] = self.group_repository.get_devices(id)
             color: Color = Color(_color.red, _color.green, _color.blue)
+            brightness = Brightness(100)
             for device in devices:
-                self.api_gateway.send_color_control(device, color)
+                self.api_gateway.send_color_control(device, color, brightness)
         except GroupException as e:
             raise ControlGroupError(str(e))

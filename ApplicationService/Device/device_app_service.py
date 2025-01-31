@@ -39,12 +39,12 @@ class DeviceAppService:
             raise DeviceNotFound(f"LIGHTではありません")
 
         # TODO : これ受け方考えたい
-        brightness = Brightness(int(_brightness))
+        brightness = Brightness(_brightness)
         color_temp = ColorTemperature(int(_color_temp))
         self.api_gateway.send_white_control(device_id, brightness, color_temp)
 
     def color_control(
-        self, _device_id: Union[str, int], d_color: DColor, _brightness: str
+        self, _device_id: Union[str, int], d_color: DColor, _brightness: Union[str, int]
     ):
         # TODO : なんか無駄な気がする
         device_id = DeviceID(_device_id)
@@ -56,5 +56,5 @@ class DeviceAppService:
             raise DeviceNotFound(f"LIGHTではありません")
 
         color = Color(d_color.red, d_color.green, d_color.blue)
-        brightness = Brightness(int(_brightness))
+        brightness = Brightness(_brightness)
         self.api_gateway.send_color_control(device_id, color, brightness)
