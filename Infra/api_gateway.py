@@ -53,6 +53,7 @@ class SwitchBotGateway(ISwitchBotGateway):
     def send_color_control(
         self, device_id: DeviceID, color: Color, brightness: Brightness
     ):
+        # TODO : 変更がないときは送らないというようなことを実現したい
         header = self._create_header()
         data = json.dumps(
             {

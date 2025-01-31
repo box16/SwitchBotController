@@ -55,6 +55,7 @@ def white_control(device_id):
 def color_control(device_id):
     color_hex = request.form.get("color_picker")
     brightness = request.form.get("color_brightness")
+    # TODO : これ何とかしたい
     if color_hex and color_hex.startswith("#") and len(color_hex) == 7:
         r = int(color_hex[1:3], 16)
         g = int(color_hex[3:5], 16)

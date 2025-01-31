@@ -49,6 +49,7 @@
         <div class="tab" onclick="switchTab(1)">カラー</div>
     </div>
 
+    <!-- デバイスの現在の状態を取得して表示してあげた方がいいかも -->
     <div id="white" class="content active">
       <form method="POST" action="{{ url_for('white_control', device_id=device_id) }}">
         <input type="hidden" name="device_id" value="{{ device_id }}">

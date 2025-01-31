@@ -27,8 +27,9 @@ class DeviceAppService:
         self.api_gateway.send_toggle_switch(device_id)
 
     def white_control(
-        self, _device_id: Union[str, int], _brightness: int, _color_temp: int
+        self, _device_id: Union[str, int], _brightness: str, _color_temp: str
     ):
+        # TODO : なんか無駄な気がする
         device_id = DeviceID(_device_id)
         if not self.device_repository.is_exist(device_id):
             raise DeviceNotFound()
@@ -37,6 +38,7 @@ class DeviceAppService:
         if not (device.type == DeviceType.LIGHT):
             raise DeviceNotFound(f"LIGHTではありません")
 
+        # TODO : これ受け方考えたい
         brightness = Brightness(int(_brightness))
         color_temp = ColorTemperature(int(_color_temp))
         self.api_gateway.send_white_control(device_id, brightness, color_temp)
@@ -44,6 +46,7 @@ class DeviceAppService:
     def color_control(
         self, _device_id: Union[str, int], d_color: DColor, _brightness: str
     ):
+        # TODO : なんか無駄な気がする
         device_id = DeviceID(_device_id)
         if not self.device_repository.is_exist(device_id):
             raise DeviceNotFound()
