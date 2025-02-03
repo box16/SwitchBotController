@@ -45,7 +45,7 @@
                       <button type="submit"> ON/OFF 切り替え </button>
                     </form>
                     <form action="{{ url_for('detail_setting', device_id=device.id) }}" method="get" style="display:inline;">
-                        <button type="submit"> 詳細設定 </button>
+                        <button type="submit"> ライト設定 </button>
                     </form>
                 </td>
             </tr>
@@ -75,7 +75,7 @@
                         <button type="submit"> 一括OFF </button>
                     </form>
                     <form action="{{ url_for('detail_setting_group', group_id=light_group.id) }}" method="get" style="display:inline;">
-                          <button type="submit"> 詳細設定 </button>
+                          <button type="submit"> ライト設定 </button>
                     </form>
                 </td>
             </tr>
