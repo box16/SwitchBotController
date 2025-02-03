@@ -1,7 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, request
 from ApplicationService.Device.device_app_service import DeviceAppService, DtODevice
-from ApplicationService.Group.group_app_service import LightGroupAppService
-from ApplicationService.Group.group_command import CreateGroupCommand
+from ApplicationService.Group.group_app_service import (
+    LightGroupAppService,
+    CreateGroupCommand,
+)
 from ApplicationService.color_dto import Color
 from Infra.device_repository import DeviceRepository
 from Infra.api_gateway import SwitchBotGateway

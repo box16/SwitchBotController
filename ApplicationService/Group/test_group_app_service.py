@@ -1,8 +1,10 @@
 import unittest
 import os
 from Domain.Device.device import DeviceID
-from ApplicationService.Group.group_app_service import LightGroupAppService
-from ApplicationService.Group.group_command import CreateGroupCommand
+from ApplicationService.Group.group_app_service import (
+    LightGroupAppService,
+    CreateGroupCommand,
+)
 from Infra.device_repository import DeviceRepository
 from Infra.group_repository import GroupRepository
 from Infra.api_gateway import FakeSwitchBotGateway

@@ -6,8 +6,15 @@ from Domain.api_gateway import ISwitchBotGateway
 from Domain.Group.group import NewGroup, GroupName
 from Domain.Device.device import DeviceID
 from Domain.Device.device_repository import IDeviceRepository
-from ApplicationService.Group.group_command import CreateGroupCommand
 from Domain.Group.group_service import LightGroupService
+from dataclasses import dataclass
+from typing import Tuple
+
+
+@dataclass(frozen=True)
+class CreateGroupCommand:
+    name: str
+    device_ids: Tuple[str, ...]
 
 
 class LightGroupAppService:
