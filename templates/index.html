@@ -52,62 +52,8 @@
             {% endfor %}
         </tbody>
     </table>
-    
-    <h1>グループ一覧</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>name</th>
-                <th>コマンド</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for group in groups %}
-            <tr>
-                <td>{{ group.name }}</td>
-                <td>
-                    <form action="{{ url_for('toggle_switch_group', group_id=group.id) }}" method="post" style="display:inline;">
-                      <button type="submit"> ON/OFF 切り替え </button>
-                    </form>
-                    <input type="color" id="color-picker-group" value="#ff0000">
-                    <button id="submit-color-group">色切り替え</button>
-                    <script>
-                        const colorPickerGroup = document.getElementById('color-picker-group');
-                        const submitButtonGroup = document.getElementById('submit-color-group');
-            
-                        submitButtonGroup.addEventListener('click', () => {
-                            const selectedColor = colorPickerGroup.value;
-                            const rgb = hexToRgb(selectedColor);
-                
-                            fetch('/color_adjustment_group', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({group_id:"{{group.id}}",...rgb}),
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                alert(`Color submitted: R=${data.r}, G=${data.g}, B=${data.b}`);
-                            })
-                            .catch(error => console.error('Error:', error));
-                        });
-                
-                        function hexToRgb(hex) {
-                            const bigint = parseInt(hex.slice(1), 16);
-                            const r = (bigint >> 16) & 255;
-                            const g = (bigint >> 8) & 255;
-                            const b = bigint & 255;
-                            return { r, g, b };
-                        }
-                    </script>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
-    <form action="{{ url_for('create_group') }}" method="get">
+    <form action="{{ url_for('create_light_group') }}" method="get">
         <button type="submit"> グループ作成 </button>
     </form>
 

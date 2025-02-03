@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request
 from ApplicationService.Device.device_app_service import DeviceAppService
 from ApplicationService.Device.device_dto import Device
-from ApplicationService.Group.group_app_service import GroupAppService
+from ApplicationService.Group.group_app_service import LightGroupAppService
 from ApplicationService.Group.group_dto import Group
 from ApplicationService.Group.group_command import CreateGroupCommand
 from ApplicationService.color_dto import Color
@@ -16,7 +16,7 @@ app = Flask(__name__)
 group_repository = GroupRepository(os.getenv("SWITCHBOT_DB_PATH"))
 device_repository = DeviceRepository(os.getenv("SWITCHBOT_DB_PATH"))
 device_app_service = DeviceAppService(device_repository, SwitchBotGateway())
-group_app_service = GroupAppService(
+light_group_app_service = LightGroupAppService(
     group_repository, device_repository, SwitchBotGateway()
 )
 
@@ -24,11 +24,9 @@ group_app_service = GroupAppService(
 @app.route("/", methods=["GET"])
 def index():
     devices: Tuple[Device] = device_app_service.get_all()
-    groups: Tuple[Group] = group_app_service.get_all()
     return render_template(
         "index.html",
         devices=devices,
-        groups=groups,
     )
 
 
@@ -73,9 +71,10 @@ def change_name(device_id):
     return redirect(url_for("index"))
 
 
-@app.route("/create_group", methods=["GET", "POST"])
-def create_group():
+@app.route("/create_light_group", methods=["GET", "POST"])
+def create_light_group():
     if request.method == "GET":
+        # TODO : Lightのみ出力
         devices: Tuple[Device] = device_app_service.get_all()
         return render_template("create_group.html", devices=devices)
 
@@ -84,27 +83,10 @@ def create_group():
             selected_device = request.form.getlist("selected")
             group_name = request.form.get("name")
             command = CreateGroupCommand(group_name, selected_device)
-            group_app_service.create_group(command)
+            light_group_app_service.create_group(command)
         except GroupException as e:
             print(f"グループ作成に失敗しました : {str(e)}")
         return redirect(url_for("index"))
-
-
-@app.route("/group/<group_id>/toggle", methods=["POST"])
-def toggle_switch_group(group_id):
-    group_app_service.toggle_switch(int(group_id))
-    return redirect(url_for("index"))
-
-
-@app.route("/color_adjustment_group", methods=["POST"])
-def color_adjustment_group():
-    data = request.get_json()
-    group_id = int(data.get("group_id"))
-    red = data.get("r", 0)
-    green = data.get("g", 0)
-    blue = data.get("b", 0)
-    group_app_service.color_adjustment(group_id, Color(red, green, blue))
-    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
