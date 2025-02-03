@@ -3,7 +3,7 @@ from utility.exception import (
 )
 from Domain.Group.group_repository import IGroupRepository
 from Domain.api_gateway import ISwitchBotGateway
-from Domain.Group.group import NewGroup, GroupName, GroupType
+from Domain.Group.group import NewGroup, GroupName, GroupType, GroupID
 from Domain.Device.device import DeviceID
 from Domain.Device.device_repository import IDeviceRepository
 from Domain.Group.group_service import LightGroupService
@@ -17,6 +17,13 @@ class CreateGroupCommand:
     device_ids: Tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class DtOGroup:
+    id: GroupID
+    name: GroupName
+    type: GroupType
+
+
 class LightGroupAppService:
     def __init__(
         self,
@@ -27,6 +34,11 @@ class LightGroupAppService:
         self.group_repository = group_repository
         self.device_repository = device_repository
         self.api_gateway = api_gateway
+
+    def get_all(self):
+        groups = self.group_repository.get_by_type(GroupType.LIGHT)
+        result = tuple(DtOGroup(g.id.get(), g.name.get(), g.type.name) for g in groups)
+        return result
 
     def create_group(self, command: CreateGroupCommand):
         light_group_service = LightGroupService(self.device_repository)

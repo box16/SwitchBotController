@@ -1,7 +1,8 @@
 from utility.exception import GroupException
 import sqlite3
 from Domain.Group.group_repository import IGroupRepository
-from Domain.Group.group import Group, NewGroup, GroupID, GroupName
+from Domain.Group.group import Group, NewGroup, GroupID, GroupName, GroupType
+from Domain.Group.group_factory import create_group
 from Domain.Device.device import DeviceID
 from Infra.repository_common import (
     make_cursor,
@@ -9,6 +10,7 @@ from Infra.repository_common import (
     DEVICE_TABLE,
     GROUP_DEVICE_TABLE,
 )
+from typing import Tuple
 
 
 class GroupRepository(IGroupRepository):
@@ -69,11 +71,8 @@ class GroupRepository(IGroupRepository):
             cursor.execute(f"SELECT id,name,type FROM {GROUP_TABLE}")
             result = cursor.fetchall()
 
-            groups = []
-            for r in result:
-                group = Group(GroupID(r[0]), GroupName(r[1]), type)
-                groups.append(group)
-        return tuple(groups)
+            groups = tuple(create_group(r[0], r[1], r[2]) for r in result)
+        return groups
 
     def get_device_ids(self, group_id: GroupID):
         with make_cursor(self.db_path) as cursor:
@@ -97,3 +96,13 @@ class GroupRepository(IGroupRepository):
             )
             result = bool(cursor.fetchone()[0])
         return result
+
+    def get_by_type(self, type: GroupType) -> Tuple[Group]:
+        with make_cursor(self.db_path) as cursor:
+            cursor.execute(
+                f"SELECT id,name,type FROM {GROUP_TABLE} WHERE type=?",
+                (type.name,),
+            )
+            result = cursor.fetchall()
+        groups = [create_group(r[0], r[1], r[2]) for r in result]
+        return groups

@@ -3,6 +3,7 @@ from ApplicationService.Device.device_app_service import DeviceAppService, DtODe
 from ApplicationService.Group.group_app_service import (
     LightGroupAppService,
     CreateGroupCommand,
+    DtOGroup,
 )
 from ApplicationService.color_dto import Color
 from Infra.device_repository import DeviceRepository
@@ -24,9 +25,11 @@ light_group_app_service = LightGroupAppService(
 @app.route("/", methods=["GET"])
 def index():
     devices: Tuple[DtODevice] = device_app_service.get_all()
+    light_groups: Tuple[DtOGroup] = light_group_app_service.get_all()
     return render_template(
         "index.html",
         devices=devices,
+        light_groups=light_groups,
     )
 
 

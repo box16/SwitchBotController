@@ -4,6 +4,7 @@ from Domain.Device.device import DeviceID
 from ApplicationService.Group.group_app_service import (
     LightGroupAppService,
     CreateGroupCommand,
+    DtOGroup,
 )
 from Infra.device_repository import DeviceRepository
 from Infra.group_repository import GroupRepository
@@ -30,6 +31,8 @@ class TestLightGroupAppService(unittest.TestCase):
     def test_happy_pass(self):
         command = CreateGroupCommand("group1", ["1", "2", "3"])
         self.light_group_app_service.create_group(command)
+        result = self.light_group_app_service.get_all()
+        self.assertEqual(len(result), 1)
 
 
 if __name__ == "__main__":

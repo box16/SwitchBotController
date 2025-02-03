@@ -53,6 +53,28 @@
         </tbody>
     </table>
 
+    <h1>ライトグループ一覧</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>name</th>
+                <th>コマンド</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for light_group in light_groups %}
+            <tr>
+                <td>
+                    <input type="text" value="{{ light_group.name }}" name="light_group_name">
+                </td>
+                <td>
+                    <button type="submit"> ON/OFF 切り替え </button>
+                    <button type="submit"> 詳細設定 </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <form action="{{ url_for('create_light_group') }}" method="get">
         <button type="submit"> グループ作成 </button>
     </form>

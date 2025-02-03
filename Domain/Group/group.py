@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from utility.exception import GroupException
 from Domain.Device.device import DeviceID
-from typing import Tuple
+from typing import Tuple, Union
 from enum import Enum
 
 
@@ -46,8 +46,35 @@ class NewGroup:
     type: GroupType
 
 
-@dataclass(frozen=True)
 class Group:
-    id: GroupID
-    name: GroupName
-    type: GroupType
+    def __init__(
+        self,
+        id: Union[GroupID, str, int],
+        name: Union[GroupName, str],
+        type: GroupType,
+    ):
+        self.id = self._to_group_id(id)
+        self.name = self._to_group_name(name)
+        if not type in GroupType:
+            raise GroupException(f"GroupTypeで指定してください")
+        self.type = type
+
+    @staticmethod
+    def _to_group_id(value):
+        if isinstance(value, GroupID):
+            return value
+        elif isinstance(value, str):
+            return GroupID(int(value))
+        elif isinstance(value, int):
+            return GroupID(value)
+        else:
+            raise GroupException(f"GroupIDかstr,intで指定してください")
+
+    @staticmethod
+    def _to_group_name(value):
+        if isinstance(value, GroupName):
+            return value
+        elif isinstance(value, str):
+            return GroupName(value)
+        else:
+            raise GroupException(f"GroupNameかstrで指定してください")
