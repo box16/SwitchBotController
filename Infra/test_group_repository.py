@@ -1,6 +1,6 @@
 import unittest
 import os
-from Domain.Group.group import NewGroup, GroupName, Group
+from Domain.Group.group import NewGroup, GroupName, Group, GroupType
 from Domain.Device.device import DeviceID
 from Infra.device_repository import DeviceRepository
 from Infra.group_repository import GroupRepository
@@ -27,6 +27,7 @@ class TestGroupRepository(unittest.TestCase):
         new_group = NewGroup(
             GroupName("group1"),
             tuple([DeviceID(1), DeviceID(2), DeviceID(3)]),
+            GroupType.LIGHT,
         )
         self.group_db.add(new_group)
         all_group = self.group_db.get_all()
@@ -36,10 +37,11 @@ class TestGroupRepository(unittest.TestCase):
         new_group = NewGroup(
             GroupName("group1"),
             tuple([DeviceID(1), DeviceID(2), DeviceID(3)]),
+            GroupType.LIGHT,
         )
         self.group_db.add(new_group)
         all_group: Tuple[Group] = self.group_db.get_all()
         group_id = all_group[0].id
 
-        devices = self.group_db.get_devices(group_id)
+        devices = self.group_db.get_device_ids(group_id)
         self.assertEqual(len(devices), 3)

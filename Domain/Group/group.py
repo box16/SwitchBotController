@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from utility.exception import GroupException
 from Domain.Device.device import DeviceID
 from typing import Tuple
+from enum import Enum
 
 
 @dataclass(frozen=True)
@@ -33,13 +34,20 @@ class GroupID:
         return self.id
 
 
+class GroupType(Enum):
+    LIGHT = 1
+    MIX = 2
+
+
 @dataclass(frozen=True)
 class NewGroup:
     name: GroupName
     device_ids: Tuple[DeviceID, ...]
+    type: GroupType
 
 
 @dataclass(frozen=True)
 class Group:
     id: GroupID
     name: GroupName
+    type: GroupType

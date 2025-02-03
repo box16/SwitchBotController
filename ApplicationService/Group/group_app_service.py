@@ -3,7 +3,7 @@ from utility.exception import (
 )
 from Domain.Group.group_repository import IGroupRepository
 from Domain.api_gateway import ISwitchBotGateway
-from Domain.Group.group import NewGroup, GroupName
+from Domain.Group.group import NewGroup, GroupName, GroupType
 from Domain.Device.device import DeviceID
 from Domain.Device.device_repository import IDeviceRepository
 from Domain.Group.group_service import LightGroupService
@@ -34,8 +34,5 @@ class LightGroupAppService:
         if not light_group_service.can_create(ids):
             raise CreateGroupError("グループを作れません")
 
-        new_group = NewGroup(
-            GroupName(command.name),
-            ids,
-        )
+        new_group = NewGroup(GroupName(command.name), ids, GroupType.LIGHT)
         self.group_repository.add(new_group)

@@ -14,7 +14,7 @@ class IGroupRepository(ABC):
         pass
 
     @abstractmethod
-    def get_devices(self, group_id: GroupID) -> Tuple[DeviceID]:
+    def get_device_ids(self, group_id: GroupID) -> Tuple[DeviceID]:
         pass
 
     @abstractmethod

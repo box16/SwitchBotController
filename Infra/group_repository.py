@@ -19,7 +19,8 @@ class GroupRepository(IGroupRepository):
                 f"""
                     CREATE TABLE IF NOT EXISTS {GROUP_TABLE} (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        name TEXT NOT NULL
+                        name TEXT NOT NULL,
+                        type TEXT NOT NULL
                     )
                 """
             )
@@ -40,10 +41,10 @@ class GroupRepository(IGroupRepository):
             with make_cursor(self.db_path) as cursor:
                 cursor.execute(
                     f"""
-                    INSERT INTO {GROUP_TABLE} (name)
-                    VALUES (?)
+                    INSERT INTO {GROUP_TABLE} (name,type)
+                    VALUES (?, ?)
                     """,
-                    (new_group.name.get(),),
+                    (new_group.name.get(), new_group.type.name),
                 )
 
                 new_group_id = cursor.lastrowid
@@ -65,16 +66,16 @@ class GroupRepository(IGroupRepository):
 
     def get_all(self):
         with make_cursor(self.db_path) as cursor:
-            cursor.execute(f"SELECT id,name FROM {GROUP_TABLE}")
+            cursor.execute(f"SELECT id,name,type FROM {GROUP_TABLE}")
             result = cursor.fetchall()
 
             groups = []
             for r in result:
-                group = Group(GroupID(r[0]), GroupName(r[1]))
+                group = Group(GroupID(r[0]), GroupName(r[1]), type)
                 groups.append(group)
         return tuple(groups)
 
-    def get_devices(self, group_id: GroupID):
+    def get_device_ids(self, group_id: GroupID):
         with make_cursor(self.db_path) as cursor:
             cursor.execute(
                 f"""
