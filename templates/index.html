@@ -65,7 +65,7 @@
             {% for light_group in light_groups %}
             <tr>
                 <td>
-                    <input type="text" value="{{ light_group.name }}" name="light_group_name">
+                    {{ light_group.name }}
                 </td>
                 <td>
                     <form action="{{ url_for('switch_on', group_id=light_group.id) }}" method="post" style="display:inline;">
