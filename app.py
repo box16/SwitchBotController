@@ -1,8 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request
-from ApplicationService.Device.device_app_service import DeviceAppService
-from ApplicationService.Device.device_dto import Device
+from ApplicationService.Device.device_app_service import DeviceAppService, DtODevice
 from ApplicationService.Group.group_app_service import LightGroupAppService
-from ApplicationService.Group.group_dto import Group
 from ApplicationService.Group.group_command import CreateGroupCommand
 from ApplicationService.color_dto import Color
 from Infra.device_repository import DeviceRepository
@@ -23,7 +21,7 @@ light_group_app_service = LightGroupAppService(
 
 @app.route("/", methods=["GET"])
 def index():
-    devices: Tuple[Device] = device_app_service.get_all()
+    devices: Tuple[DtODevice] = device_app_service.get_all()
     return render_template(
         "index.html",
         devices=devices,
@@ -75,7 +73,7 @@ def change_name(device_id):
 def create_light_group():
     if request.method == "GET":
         # TODO : Lightのみ出力
-        devices: Tuple[Device] = device_app_service.get_all()
+        devices: Tuple[DtODevice] = device_app_service.get_all()
         return render_template("create_group.html", devices=devices)
 
     if request.method == "POST":
