@@ -68,8 +68,15 @@
                     <input type="text" value="{{ light_group.name }}" name="light_group_name">
                 </td>
                 <td>
-                    <button type="submit"> ON/OFF 切り替え </button>
-                    <button type="submit"> 詳細設定 </button>
+                    <form action="{{ url_for('switch_on', group_id=light_group.id) }}" method="post" style="display:inline;">
+                        <button type="submit"> 一括ON </button>
+                    </form>
+                    <form action="{{ url_for('switch_off', group_id=light_group.id) }}" method="post" style="display:inline;">
+                        <button type="submit"> 一括OFF </button>
+                    </form>
+                    <form action="{{ url_for('detail_setting_group', group_id=light_group.id) }}" method="get" style="display:inline;">
+                          <button type="submit"> 詳細設定 </button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}

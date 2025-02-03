@@ -21,16 +21,23 @@ class GroupName:
 
 @dataclass(frozen=True)
 class GroupID:
-    id: int
+    id: str
 
     def __post_init__(self):
         if not self.id:
             raise GroupException("idが空です")
+        object.__setattr__(self, "id", self._to_id(self.id))
 
-        if not isinstance(self.id, int):
-            raise GroupException("group_idはintで指定してください")
+    @staticmethod
+    def _to_id(value):
+        if isinstance(value, str):
+            return value
+        elif isinstance(value, int):
+            return str(value)
+        else:
+            raise GroupException(f"strかintで指定してください")
 
-    def get(self) -> int:
+    def get(self):
         return self.id
 
 
