@@ -88,4 +88,3 @@ class DeviceRepository(IDeviceRepository):
                     device_id.get(),
                 ),
             )
-            pass

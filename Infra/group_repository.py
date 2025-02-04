@@ -106,3 +106,46 @@ class GroupRepository(IGroupRepository):
             result = cursor.fetchall()
         groups = [create_group(r[0], r[1], r[2]) for r in result]
         return groups
+
+    def change_name(self, id: GroupID, new_name: GroupName):
+        with make_cursor(self.db_path) as cursor:
+            cursor.execute(
+                f"UPDATE {GROUP_TABLE} SET name = ? WHERE id=?",
+                (
+                    new_name.get(),
+                    id.get(),
+                ),
+            )
+
+    def add_device(self, id: GroupID, new_devices: tuple[DeviceID]):
+        try:
+            with make_cursor(self.db_path) as cursor:
+                for device in new_devices:
+                    cursor.execute(
+                        f"""
+                        INSERT INTO {GROUP_DEVICE_TABLE} (group_id,device_id)
+                        VALUES (?,?)
+                        """,
+                        (
+                            id.get(),
+                            device.get(),
+                        ),
+                    )
+        except sqlite3.IntegrityError as e:
+            raise GroupException(f"GroupID:{id.get()},DeviceID:{device.id()},{str(e)}")
+
+    def remove_device(self, id: GroupID, remove_devices: tuple[DeviceID]):
+        try:
+            with make_cursor(self.db_path) as cursor:
+                for device in remove_devices:
+                    cursor.execute(
+                        f"""
+                            DELETE FROM {GROUP_DEVICE_TABLE} WHERE group_id = ? AND device_id = ?
+                            """,
+                        (
+                            id.get(),
+                            device.get(),
+                        ),
+                    )
+        except sqlite3.IntegrityError as e:
+            raise GroupException(f"GroupID:{id.get()},DeviceID:{device.id()},{str(e)}")
