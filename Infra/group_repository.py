@@ -149,3 +149,13 @@ class GroupRepository(IGroupRepository):
                     )
         except sqlite3.IntegrityError as e:
             raise GroupException(f"GroupID:{id.get()},DeviceID:{device.id()},{str(e)}")
+
+    def get_by_id(self, id: GroupID) -> Group:
+        with make_cursor(self.db_path) as cursor:
+            cursor.execute(
+                f"SELECT id,name,type FROM {GROUP_TABLE} WHERE id=?",
+                (id.get(),),
+            )
+            result = cursor.fetchone()
+        group = create_group(result[0], result[1], result[2])
+        return group

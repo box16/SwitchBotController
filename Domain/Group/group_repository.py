@@ -26,6 +26,10 @@ class IGroupRepository(ABC):
         pass
 
     @abstractmethod
+    def get_by_id(self, id: GroupID) -> Group:
+        pass
+
+    @abstractmethod
     def change_name(self, id: GroupID, new_name: GroupName):
         pass
 

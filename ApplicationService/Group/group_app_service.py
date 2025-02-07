@@ -18,6 +18,12 @@ class CreateGroupCommand:
 
 
 @dataclass(frozen=True)
+class UpdateGroupCommand:
+    add_devices: Tuple[str, ...]
+    remove_devices: Tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class DtOGroup:
     id: GroupID
     name: GroupName
@@ -34,16 +40,29 @@ class LightGroupAppService:
         self.group_repository = group_repository
         self.device_repository = device_repository
         self.api_gateway = api_gateway
+        self.light_group_service = LightGroupService(
+            self.device_repository, self.group_repository
+        )
 
     def get_all(self):
         groups = self.group_repository.get_by_type(GroupType.LIGHT)
         result = tuple(DtOGroup(g.id.get(), g.name.get(), g.type.name) for g in groups)
         return result
 
+    def get_by_id(self, _id: Union[str, int]):
+        id = GroupID(_id)
+        if not self.group_repository.is_exist(id):
+            raise GroupException("存在しないグループです")
+
+        result = self.group_repository.get_by_id(id)
+        if not result.type == GroupType.LIGHT:
+            raise GroupException("LIGHTグループではありません")
+
+        return DtOGroup(result.id.get(), result.name.get(), result.type.name)
+
     def create_group(self, command: CreateGroupCommand):
-        light_group_service = LightGroupService(self.device_repository)
         ids = [DeviceID(id) for id in command.device_ids]
-        if not light_group_service.can_create(ids):
+        if not self.light_group_service.can_create(ids):
             raise CreateGroupError("グループを作れません")
 
         new_group = NewGroup(GroupName(command.name), ids, GroupType.LIGHT)
@@ -95,3 +114,30 @@ class LightGroupAppService:
         ids = self.group_repository.get_device_ids(group_id)
         for id in ids:
             self.api_gateway.send_color_control(id, color, brightness)
+
+    def change_name(self, _group_id: Union[str, int], _new_name: str):
+        group_id = GroupID(_group_id)
+        if not self.group_repository.is_exist(group_id):
+            raise GroupException("存在しないグループです")
+
+        new_name = GroupName(_new_name)
+        self.group_repository.change_name(group_id, new_name)
+
+    def update_group(
+        self, _group_id: Union[str, int], update_command: UpdateGroupCommand
+    ):
+        group_id = GroupID(_group_id)
+        if not self.group_repository.is_exist(group_id):
+            raise GroupException("存在しないグループです")
+
+        add_devices = tuple(DeviceID(d) for d in update_command.add_devices)
+        can_add = self.light_group_service.can_add_device(group_id, add_devices)
+        if can_add:
+            self.group_repository.add_device(group_id, add_devices)
+
+        remove_devices = tuple(DeviceID(d) for d in update_command.remove_devices)
+        can_remove = self.light_group_service.can_remove_device(
+            group_id, remove_devices
+        )
+        if can_remove:
+            self.group_repository.remove_device(group_id, remove_devices)

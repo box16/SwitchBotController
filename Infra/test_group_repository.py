@@ -1,6 +1,6 @@
 import unittest
 import os
-from Domain.Group.group import NewGroup, GroupName, Group, GroupType
+from Domain.Group.group import NewGroup, GroupName, Group, GroupType, GroupID
 from Domain.Device.device import DeviceID
 from Infra.device_repository import DeviceRepository
 from Infra.group_repository import GroupRepository
@@ -9,12 +9,12 @@ from typing import Tuple
 
 class TestGroupRepository(unittest.TestCase):
     def setUp(self):
-        self.device_db = DeviceRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
+        self.device_repository = DeviceRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
         self.group_repository = GroupRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
 
-        self.device_db.add(DeviceID(1), "ColorLight1", "Color Bulb")
-        self.device_db.add(DeviceID(2), "ColorLight2", "Color Bulb")
-        self.device_db.add(DeviceID(3), "ColorLight3", "Color Bulb")
+        self.device_repository.add(DeviceID(1), "ColorLight1", "Color Bulb")
+        self.device_repository.add(DeviceID(2), "ColorLight2", "Color Bulb")
+        self.device_repository.add(DeviceID(3), "ColorLight3", "Color Bulb")
         new_group = NewGroup(
             GroupName("group1"),
             tuple([DeviceID(1), DeviceID(2), DeviceID(3)]),
@@ -46,7 +46,7 @@ class TestGroupRepository(unittest.TestCase):
         self.assertEqual(new_name.get(), now_name.get())
 
     def test_add_device(self):
-        self.device_db.add(DeviceID(4), "ColorLight4", "Color Bulb")
+        self.device_repository.add(DeviceID(4), "ColorLight4", "Color Bulb")
         self.group_repository.add_device(self.INITIAL_GROUP_ID, (DeviceID(4),))
         devices = self.group_repository.get_device_ids(self.INITIAL_GROUP_ID)
         self.assertEqual(len(devices), 4)
@@ -55,3 +55,7 @@ class TestGroupRepository(unittest.TestCase):
         self.group_repository.remove_device(self.INITIAL_GROUP_ID, (DeviceID(1),))
         devices = self.group_repository.get_device_ids(self.INITIAL_GROUP_ID)
         self.assertEqual(len(devices), 2)
+
+    def test_get_by_id(self):
+        result = self.group_repository.get_by_id(GroupID(1))
+        self.assertEqual(result.name.get(), "group1")
