@@ -30,6 +30,10 @@ class IGroupRepository(ABC):
         pass
 
     @abstractmethod
+    def get_member_by_id(self, id: GroupID) -> tuple[DeviceID]:
+        pass
+
+    @abstractmethod
     def change_name(self, id: GroupID, new_name: GroupName):
         pass
 

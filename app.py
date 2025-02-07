@@ -137,20 +137,12 @@ def create_light_group():
 def edit_group(group_id):
     group = light_group_app_service.get_by_id(group_id)
 
-    # TODO : グループメンバー取得
     if request.method == "GET":
-        from Domain.Group.group import GroupID  # GroupIDクラスを利用
-
-        current_devices = group_repository.get_device_ids(GroupID(group_id))
-        # 各 DeviceID から実際のID文字列を取り出す（get()メソッドがあると仮定）
-        current_device_ids = {d.get() for d in current_devices}
-        # 全デバイス一覧を取得（編集用に全件表示）
-        devices: Tuple[DtODevice] = device_app_service.get_all()
+        current_devices = light_group_app_service.get_member_by_id(group_id)
         return render_template(
             "edit_light_group.html",
             group=group,
-            current_device_ids=current_device_ids,
-            devices=devices,
+            current_device=current_devices,
         )
 
     if request.method == "POST":

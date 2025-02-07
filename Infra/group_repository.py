@@ -159,3 +159,13 @@ class GroupRepository(IGroupRepository):
             result = cursor.fetchone()
         group = create_group(result[0], result[1], result[2])
         return group
+
+    def get_member_by_id(self, id: GroupID) -> tuple[DeviceID]:
+        with make_cursor(self.db_path) as cursor:
+            cursor.execute(
+                f"SELECT device_id FROM {GROUP_DEVICE_TABLE} WHERE group_id=?",
+                (id.get(),),
+            )
+            result = cursor.fetchall()
+        ids = tuple(DeviceID(r[0]) for r in result)
+        return ids

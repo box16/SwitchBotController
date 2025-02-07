@@ -9,6 +9,7 @@ from Domain.Device.device_repository import IDeviceRepository
 from Domain.Group.group_service import LightGroupService
 from dataclasses import dataclass
 from typing import Tuple, Union
+from ApplicationService.Device.device_app_service import DtODevice
 
 
 @dataclass(frozen=True)
@@ -59,6 +60,22 @@ class LightGroupAppService:
             raise GroupException("LIGHTグループではありません")
 
         return DtOGroup(result.id.get(), result.name.get(), result.type.name)
+
+    def get_member_by_id(self, _id: Union[str, int]):
+        id = GroupID(_id)
+        if not self.group_repository.is_exist(id):
+            raise GroupException("存在しないグループです")
+
+        result = self.group_repository.get_by_id(id)
+        if not result.type == GroupType.LIGHT:
+            raise GroupException("LIGHTグループではありません")
+
+        device_ids = self.group_repository.get_member_by_id(id)
+        devices = []
+        for d_id in device_ids:
+            devices.append(self.device_repository.get_by_id(d_id))
+
+        return tuple(DtODevice(d.id.get(), d.name.get(), d.type.name) for d in devices)
 
     def create_group(self, command: CreateGroupCommand):
         ids = [DeviceID(id) for id in command.device_ids]

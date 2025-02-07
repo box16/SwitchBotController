@@ -59,3 +59,7 @@ class TestGroupRepository(unittest.TestCase):
     def test_get_by_id(self):
         result = self.group_repository.get_by_id(GroupID(1))
         self.assertEqual(result.name.get(), "group1")
+
+    def test_get_member_by_id(self):
+        result = self.group_repository.get_member_by_id(GroupID(1))
+        self.assertEqual((DeviceID(1), DeviceID(2), DeviceID(3)), result)

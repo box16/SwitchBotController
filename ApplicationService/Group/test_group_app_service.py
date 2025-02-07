@@ -45,8 +45,8 @@ class TestLightGroupAppService(unittest.TestCase):
         self.device_repository.add(DeviceID(4), "ColorLight4", "Color Bulb")
         update_command = UpdateGroupCommand((4,), (1, 2))
         self.light_group_app_service.update_group(GROUP_ID, update_command)
-        result = len(self.group_repository.get_device_ids(GroupID(GROUP_ID)))
-        self.assertEqual(2, result)
+        result = self.light_group_app_service.get_member_by_id(GROUP_ID)
+        self.assertEqual(len(result), 2)
 
         result = self.light_group_app_service.get_by_id(GROUP_ID)
         self.assertEqual(result.name, new_name)

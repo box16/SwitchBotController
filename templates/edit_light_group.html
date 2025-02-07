@@ -24,14 +24,14 @@
         </div>
         <div class="device-list">
             <h2>グループメンバー</h2>
-            <p>以下のデバイスをチェックすると、グループに含まれます。</p>
-            {% for device in devices %}
+            {% for device in current_device %}
                 <div class="device-item">
-                    <input type="checkbox" name="selected_devices" value="{{ device.id }}" id="device_{{ device.id }}"
-                    {% if device.id in current_device_ids %}checked{% endif %}>
+                    <input type="checkbox" name="selected_devices" value="{{ device.id }}" id="device_{{ device.id }}" checked>
                     <label for="device_{{ device.id }}">{{ device.name }} ({{ device.type }})</label>
                 </div>
             {% endfor %}
+
+            <p>以下のデバイスをチェックすると、グループに含まれます。</p>
         </div>
         <div>
             <button type="submit">更新</button>
