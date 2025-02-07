@@ -26,9 +26,9 @@ class UpdateGroupCommand:
 
 @dataclass(frozen=True)
 class DtOGroup:
-    id: GroupID
-    name: GroupName
-    type: GroupType
+    id: str
+    name: str
+    type: str
 
 
 class LightGroupAppService:

@@ -135,9 +135,8 @@ def create_light_group():
 
 @app.route("/light_group/<group_id>/edit", methods=["GET", "POST"])
 def edit_group(group_id):
-    group = light_group_app_service.get_by_id(group_id)
-
     if request.method == "GET":
+        group = light_group_app_service.get_by_id(group_id)
         current_devices = light_group_app_service.get_member_by_id(group_id)
         light_devices = device_app_service.get_by_type("LIGHT")
 
@@ -150,29 +149,20 @@ def edit_group(group_id):
         )
 
     if request.method == "POST":
+        group = light_group_app_service.get_by_id(group_id)
+
         new_name = request.form.get("group_name")
-        selected_devices = request.form.getlist(
-            "selected_devices"
-        )  # 選択されたデバイスIDのリスト
-
-        # 現在のグループメンバーを文字列の集合として取得
-        from Domain.Group.group import GroupID
-
-        current_devices = group_repository.get_device_ids(GroupID(group_id))
-        current_device_ids = {d.get() for d in current_devices}
-        new_device_ids = set(selected_devices)
-
-        # 追加すべきデバイスと削除すべきデバイスを算出
-        add_devices = tuple(new_device_ids - current_device_ids)
-        remove_devices = tuple(current_device_ids - new_device_ids)
-
-        # グループ名が変更されていれば更新
-        if new_name and new_name != group.name:
+        if group.name != new_name:
             light_group_app_service.change_name(group_id, new_name)
 
-        # グループメンバーの追加／削除を実行
-        update_command = UpdateGroupCommand(add_devices, remove_devices)
-        light_group_app_service.update_group(group_id, update_command)
+        selected_ids = set(request.form.getlist("selected_devices"))
+        current_devices = light_group_app_service.get_member_by_id(group_id)
+        current_ids = set([d.id for d in current_devices])
+
+        add_devices = selected_ids - current_ids
+        remove_devices = current_ids - selected_ids
+        command = UpdateGroupCommand(tuple(add_devices), tuple(remove_devices))
+        light_group_app_service.update_group(group_id, command)
 
         return redirect(url_for("index"))
 
