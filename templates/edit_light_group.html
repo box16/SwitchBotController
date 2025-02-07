@@ -32,6 +32,12 @@
             {% endfor %}
 
             <p>以下のデバイスをチェックすると、グループに含まれます。</p>
+            {% for device in not_group_member %}
+                <div class="device-item">
+                    <input type="checkbox" name="selected_devices" value="{{ device.id }}" id="device_{{ device.id }}">
+                    <label for="device_{{ device.id }}">{{ device.name }} ({{ device.type }})</label>
+                </div>
+            {% endfor %}
         </div>
         <div>
             <button type="submit">更新</button>

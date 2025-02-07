@@ -26,6 +26,14 @@ class DeviceAppService:
         devices: Tuple[Device] = self.device_repository.get_all()
         return tuple(DtODevice(d.id.get(), d.name.get(), d.type.name) for d in devices)
 
+    def get_by_type(self, _type: str) -> Tuple[DtODevice]:
+        upper_type = _type.upper()
+        if not upper_type in DeviceType.__members__:
+            raise DeviceNotFound("存在しないタイプです")
+
+        result = self.device_repository.get_by_type(DeviceType[upper_type])
+        return tuple(DtODevice(r.id.get(), r.name.get(), r.type.name) for r in result)
+
     def toggle_switch(self, _device_id: Union[str, int]):
         device_id = DeviceID(_device_id)
         if not self.device_repository.is_exist(device_id):

@@ -139,10 +139,14 @@ def edit_group(group_id):
 
     if request.method == "GET":
         current_devices = light_group_app_service.get_member_by_id(group_id)
+        light_devices = device_app_service.get_by_type("LIGHT")
+
+        not_group_member = set(light_devices) - set(current_devices)
         return render_template(
             "edit_light_group.html",
             group=group,
             current_device=current_devices,
+            not_group_member=not_group_member,
         )
 
     if request.method == "POST":
