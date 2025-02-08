@@ -15,13 +15,14 @@ class TestDeviceAppService(unittest.TestCase):
         self.device_app_service = DeviceAppService(self.device_repository)
 
         self.device_repository.add(DeviceID(ID), "ColorLight", "Color Bulb")
+        self.device_repository.add(DeviceID(ID + 1), "Curtain", "Curtain")
 
     def tearDown(self):
         os.remove(os.getenv("SWITCHBOT_TEST_DB_PATH"))
 
     def test_happy_pass(self):
         devices = self.device_app_service.get_all()
-        self.assertEqual(len(devices), 1)
+        self.assertEqual(len(devices), 2)
 
         new_name = "test_light"
         self.device_app_service.change_name(ID, new_name)

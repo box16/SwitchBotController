@@ -2,6 +2,7 @@ from Domain.Device.device_repository import IDeviceRepository
 from Domain.Device.device import DeviceID, DeviceType
 from Domain.Device.light import Color, Brightness, ColorTemperature
 from Domain.api_gateway import ISwitchBotGateway
+from ApplicationService.Device.device_app_service import DtODevice
 from typing import Union
 from utility.exception import DeviceNotFound
 from dataclasses import dataclass
@@ -20,6 +21,10 @@ class LightAppService:
     ):
         self.device_repository = device_repository
         self.api_gateway = api_gateway
+
+    def get_all(self):
+        devices = self.device_repository.get_by_type(DeviceType.LIGHT)
+        return tuple(DtODevice(d.id.get(), d.name.get(), d.type.name) for d in devices)
 
     def toggle_switch(self, _device_id: Union[str, int]):
         device_id = DeviceID(_device_id)
