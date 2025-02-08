@@ -5,6 +5,7 @@ from ApplicationService.Device.device_app_service import (
 )
 from ApplicationService.Group.group_app_service import (
     LightGroupAppService,
+    GroupAppService,
     CreateGroupCommand,
     DtOGroup,
     UpdateGroupCommand,
@@ -25,6 +26,7 @@ light_app_service = LightAppService(device_repository, SwitchBotGateway())
 light_group_app_service = LightGroupAppService(
     group_repository, device_repository, SwitchBotGateway()
 )
+group_app_service = GroupAppService(group_repository, device_repository)
 
 
 # 管理システム
@@ -85,8 +87,11 @@ def color_control(device_id):
 # グループ
 @app.route("/group/<group_id>/delete", methods=["POST"])
 def delete_group(group_id):
-    light_group_app_service.delete_group(group_id)
+    group_app_service.delete_group(group_id)
     return redirect(url_for("index"))
+
+
+# TODO : change_name
 
 
 # ライトグループ
