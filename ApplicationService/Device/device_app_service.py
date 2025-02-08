@@ -15,24 +15,12 @@ class DtODevice:
     type: str
 
 
-class DeviceAppService:
+class LightAppService:
     def __init__(
         self, device_repository: IDeviceRepository, api_gateway: ISwitchBotGateway
     ):
         self.device_repository = device_repository
         self.api_gateway = api_gateway
-
-    def get_all(self) -> Tuple[DtODevice]:
-        devices: Tuple[Device] = self.device_repository.get_all()
-        return tuple(DtODevice(d.id.get(), d.name.get(), d.type.name) for d in devices)
-
-    def get_by_type(self, _type: str) -> Tuple[DtODevice]:
-        upper_type = _type.upper()
-        if not upper_type in DeviceType.__members__:
-            raise DeviceNotFound("存在しないタイプです")
-
-        result = self.device_repository.get_by_type(DeviceType[upper_type])
-        return tuple(DtODevice(r.id.get(), r.name.get(), r.type.name) for r in result)
 
     def toggle_switch(self, _device_id: Union[str, int]):
         device_id = DeviceID(_device_id)
@@ -74,9 +62,20 @@ class DeviceAppService:
         brightness = Brightness(_brightness)
         self.api_gateway.send_color_control(device_id, color, brightness)
 
+
+class DeviceAppService:
+    def __init__(self, device_repository: IDeviceRepository):
+        self.device_repository = device_repository
+
+    def get_all(self) -> Tuple[DtODevice]:
+        devices: Tuple[Device] = self.device_repository.get_all()
+        return tuple(DtODevice(d.id.get(), d.name.get(), d.type.name) for d in devices)
+
     def change_name(self, _device_id: Union[int, str], new_name: str):
+        # TODO :  これはリポジトリ側に持っていける
         device_id = DeviceID(_device_id)
         if not self.device_repository.is_exist(device_id):
             raise DeviceNotFound()
 
+        # TODO : ドメイン介さないのがいいのか検討
         self.device_repository.change_name(device_id, DeviceName(new_name))

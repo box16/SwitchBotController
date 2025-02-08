@@ -1,5 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, request
-from ApplicationService.Device.device_app_service import DeviceAppService, DtODevice
+from ApplicationService.Device.device_app_service import (
+    DeviceAppService,
+    DtODevice,
+    LightAppService,
+)
 from ApplicationService.Group.group_app_service import (
     LightGroupAppService,
     CreateGroupCommand,
@@ -17,12 +21,14 @@ import os
 app = Flask(__name__)
 group_repository = GroupRepository(os.getenv("SWITCHBOT_DB_PATH"))
 device_repository = DeviceRepository(os.getenv("SWITCHBOT_DB_PATH"))
-device_app_service = DeviceAppService(device_repository, SwitchBotGateway())
+device_app_service = DeviceAppService(device_repository)
+light_app_service = LightAppService(device_repository, SwitchBotGateway())
 light_group_app_service = LightGroupAppService(
     group_repository, device_repository, SwitchBotGateway()
 )
 
 
+# 管理システム
 @app.route("/", methods=["GET"])
 def index():
     devices: Tuple[DtODevice] = device_app_service.get_all()
@@ -34,21 +40,18 @@ def index():
     )
 
 
+# デバイス
+@app.route("/device/<device_id>/change_name", methods=["POST"])
+def change_name(device_id):
+    new_name = request.form.get("device_name")
+    device_app_service.change_name(device_id, new_name)
+    return redirect(url_for("index"))
+
+
+# ライト
 @app.route("/light/<device_id>/toggle", methods=["POST"])
 def toggle_switch(device_id):
-    device_app_service.toggle_switch(str(device_id))
-    return redirect(url_for("index"))
-
-
-@app.route("/light_group/<group_id>/on", methods=["POST"])
-def switch_on(group_id):
-    light_group_app_service.switch_on(group_id)
-    return redirect(url_for("index"))
-
-
-@app.route("/light_group/<group_id>/off", methods=["POST"])
-def switch_off(group_id):
-    light_group_app_service.switch_off(group_id)
+    light_app_service.toggle_switch(str(device_id))
     return redirect(url_for("index"))
 
 
@@ -57,25 +60,12 @@ def detail_setting(device_id):
     return render_template("light.html", device_id=device_id)
 
 
-@app.route("/light_group/<group_id>/detail", methods=["GET"])
-def detail_setting_group(group_id):
-    return render_template("light_group.html", group_id=group_id)
-
-
 @app.route("/light/<device_id>/white", methods=["POST"])
 def white_control(device_id):
     brightness = request.form.get("white_brightness")
     color_temp = request.form.get("color_temp")
-    device_app_service.white_control(device_id, brightness, color_temp)
+    light_app_service.white_control(device_id, brightness, color_temp)
     return render_template("light.html", device_id=device_id)
-
-
-@app.route("/light_group/<group_id>/white", methods=["POST"])
-def white_control_group(group_id):
-    brightness = request.form.get("white_brightness")
-    color_temp = request.form.get("color_temp")
-    light_group_app_service.white_control(group_id, brightness, color_temp)
-    return render_template("light_group.html", group_id=group_id)
 
 
 @app.route("/light/<device_id>/color", methods=["POST"])
@@ -89,8 +79,41 @@ def color_control(device_id):
         b = int(color_hex[5:7], 16)
     else:
         r, g, b = 255, 255, 255
-    device_app_service.color_control(device_id, Color(r, g, b), brightness)
+    light_app_service.color_control(device_id, Color(r, g, b), brightness)
     return render_template("light.html", device_id=device_id)
+
+
+# グループ
+@app.route("/group/<group_id>/delete", methods=["POST"])
+def delete_group(group_id):
+    light_group_app_service.delete_group(group_id)
+    return redirect(url_for("index"))
+
+
+# ライトグループ
+@app.route("/light_group/<group_id>/on", methods=["POST"])
+def switch_on(group_id):
+    light_group_app_service.switch_on(group_id)
+    return redirect(url_for("index"))
+
+
+@app.route("/light_group/<group_id>/off", methods=["POST"])
+def switch_off(group_id):
+    light_group_app_service.switch_off(group_id)
+    return redirect(url_for("index"))
+
+
+@app.route("/light_group/<group_id>/detail", methods=["GET"])
+def detail_setting_group(group_id):
+    return render_template("light_group.html", group_id=group_id)
+
+
+@app.route("/light_group/<group_id>/white", methods=["POST"])
+def white_control_group(group_id):
+    brightness = request.form.get("white_brightness")
+    color_temp = request.form.get("color_temp")
+    light_group_app_service.white_control(group_id, brightness, color_temp)
+    return render_template("light_group.html", group_id=group_id)
 
 
 @app.route("/light_group/<group_id>/color", methods=["POST"])
@@ -106,13 +129,6 @@ def color_control_group(group_id):
         r, g, b = 255, 255, 255
     light_group_app_service.color_control(group_id, Color(r, g, b), brightness)
     return render_template("light_group.html", group_id=group_id)
-
-
-@app.route("/device/<device_id>/change_name", methods=["POST"])
-def change_name(device_id):
-    new_name = request.form.get("device_name")
-    device_app_service.change_name(device_id, new_name)
-    return redirect(url_for("index"))
 
 
 @app.route("/create_light_group", methods=["GET", "POST"])
@@ -165,12 +181,6 @@ def edit_group(group_id):
         light_group_app_service.update_group(group_id, command)
 
         return redirect(url_for("index"))
-
-
-@app.route("/group/<group_id>/delete", methods=["POST"])
-def delete_group(group_id):
-    light_group_app_service.delete_group(group_id)
-    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
