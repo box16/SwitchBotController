@@ -42,6 +42,7 @@ class DeviceName:
 
 class DeviceType(Enum):
     LIGHT = 1
+    OTHER = 2
 
 
 class Device:
