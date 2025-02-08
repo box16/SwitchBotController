@@ -1,5 +1,5 @@
 from Domain.Device.device_repository import IDeviceRepository
-from Domain.Device.device import Device, DeviceID, DeviceName
+from Domain.Device.device import Device, DeviceID, DeviceName, DeviceType
 from Domain.Device.device_factory import create_device
 from typing import Tuple
 from Infra.repository_common import make_cursor, DEVICE_TABLE
@@ -88,4 +88,7 @@ class DeviceRepository(IDeviceRepository):
                     device_id.get(),
                 ),
             )
-            pass
+
+    def get_by_type(self, type: DeviceType) -> Tuple[Device]:
+        result = self.get_all()
+        return tuple(r for r in result if r.type == type)

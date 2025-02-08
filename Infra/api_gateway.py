@@ -111,6 +111,38 @@ class SwitchBotGateway(ISwitchBotGateway):
             data=data,
         )
 
+    def send_switch_on(self, device_id: DeviceID):
+        header = self._create_header()
+        data = json.dumps(
+            {
+                "commandType": "command",
+                "command": "turnOn",
+                "parameter": "default",
+            }
+        )
+
+        requests.post(
+            f"https://api.switch-bot.com/v1.1/devices/{device_id.get()}/commands",
+            headers=header,
+            data=data,
+        )
+
+    def send_switch_off(self, device_id: DeviceID):
+        header = self._create_header()
+        data = json.dumps(
+            {
+                "commandType": "command",
+                "command": "turnOff",
+                "parameter": "default",
+            }
+        )
+
+        requests.post(
+            f"https://api.switch-bot.com/v1.1/devices/{device_id.get()}/commands",
+            headers=header,
+            data=data,
+        )
+
 
 class FakeSwitchBotGateway(ISwitchBotGateway):
     def send_toggle_switch(self, device_id: DeviceID):
@@ -124,4 +156,10 @@ class FakeSwitchBotGateway(ISwitchBotGateway):
     def send_white_control(
         self, device_id: DeviceID, brightness: Brightness, color_temp: ColorTemperature
     ):
+        pass
+
+    def send_switch_on(self, device_id: DeviceID):
+        pass
+
+    def send_switch_off(self, device_id: DeviceID):
         pass

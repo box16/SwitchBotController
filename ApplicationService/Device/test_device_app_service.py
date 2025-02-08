@@ -23,27 +23,19 @@ class TestDeviceAppService(unittest.TestCase):
     def tearDown(self):
         os.remove(os.getenv("SWITCHBOT_TEST_DB_PATH"))
 
-    def test_get_all(self):
-        device_ids = self.device_app_service.get_all()
-        self.assertEqual(len(device_ids), 1)
+    def test_happy_pass(self):
+        # TODO : Lightのみ出力をfactory側で持たせているので暫定
+        devices = self.device_app_service.get_all()
+        self.assertEqual(len(devices), 1)
 
-    def test_toggle_switch(self):
-        try:
-            self.device_app_service.toggle_switch(ID)
-        except Exception as e:
-            assert False, f"{e}"
+        devices = self.device_app_service.get_by_type("light")
+        self.assertEqual(len(devices), 1)
 
-    def test_toggle_switch_non_existent_device(self):
-        with self.assertRaises(DeviceNotFound):
-            self.device_app_service.toggle_switch(ID + 1)
-
-    def test_color_adjustment(self):
-        try:
-            color = Color(100, 100, 100)
-            brightness = 100
-            self.device_app_service.color_control(ID, color, brightness)
-        except Exception as e:
-            assert False, f"{e}"
+        new_name = "test_light"
+        self.device_app_service.change_name(ID, new_name)
+        # TODO : id指定の取得が無いので暫定
+        device = self.device_app_service.get_by_type("light")[0]
+        self.assertEqual(device.name, new_name)
 
 
 if __name__ == "__main__":

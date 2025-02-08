@@ -1,85 +1,59 @@
 import unittest
 import os
-from utility.exception import CreateGroupError, ControlGroupError
 from Domain.Device.device import DeviceID
-from ApplicationService.Group.group_app_service import GroupAppService
-from ApplicationService.Group.group_command import CreateGroupCommand
-from ApplicationService.color_dto import Color
+from Domain.Group.group import GroupID
+from ApplicationService.Group.group_app_service import (
+    LightGroupAppService,
+    CreateGroupCommand,
+    DtOGroup,
+    UpdateGroupCommand,
+)
 from Infra.device_repository import DeviceRepository
 from Infra.group_repository import GroupRepository
 from Infra.api_gateway import FakeSwitchBotGateway
 
 
-class TestGroupAppService(unittest.TestCase):
+class TestLightGroupAppService(unittest.TestCase):
     def setUp(self):
-        device_repository = DeviceRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
+        self.device_repository = DeviceRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
         self.group_repository = GroupRepository(os.getenv("SWITCHBOT_TEST_DB_PATH"))
         api_gateway = FakeSwitchBotGateway()
-        self.group_app_service = GroupAppService(
-            self.group_repository, device_repository, api_gateway
-        )
 
-        device_repository.add(DeviceID(1), "ColorLight1", "Color Bulb")
-        device_repository.add(DeviceID(2), "ColorLight2", "Color Bulb")
-        device_repository.add(DeviceID(3), "ColorLight3", "Color Bulb")
-        command = CreateGroupCommand("group1", ["1", "2", "3"])
-        self.group_app_service.create_group(command)
+        self.device_repository.add(DeviceID(1), "ColorLight1", "Color Bulb")
+        self.device_repository.add(DeviceID(2), "ColorLight2", "Color Bulb")
+        self.device_repository.add(DeviceID(3), "ColorLight3", "Color Bulb")
+
+        self.light_group_app_service = LightGroupAppService(
+            self.group_repository, self.device_repository, api_gateway
+        )
 
     def tearDown(self):
         os.remove(os.getenv("SWITCHBOT_TEST_DB_PATH"))
 
-    def test_get_all_one_groups(self):
-        all_group = self.group_app_service.get_all()
-        self.assertEqual(len(all_group), 1)
+    def test_happy_pass(self):
+        GROUP_ID = 1
+        command = CreateGroupCommand("group1", ["1", "2", "3"])
+        self.light_group_app_service.create_group(command)
+        result = self.light_group_app_service.get_all()
+        self.assertEqual(len(result), 1)
 
-    def test_get_all_two_groups(self):
-        command = CreateGroupCommand("group2", ["1", "2", "3"])
-        self.group_app_service.create_group(command)
-        all_group = self.group_app_service.get_all()
-        self.assertEqual(len(all_group), 2)
+        new_name = "test_name"
+        self.light_group_app_service.change_name(GROUP_ID, new_name)
+        result = self.light_group_app_service.get_all()[0]
+        self.assertEqual(new_name, result.name)
 
-    def test_create_group_non_existent_device_id(self):
-        with self.assertRaises(CreateGroupError):
-            command = CreateGroupCommand("group1", ["1", "2", "5"])
-            self.group_app_service.create_group(command)
+        self.device_repository.add(DeviceID(4), "ColorLight4", "Color Bulb")
+        update_command = UpdateGroupCommand((4,), (1, 2))
+        self.light_group_app_service.update_group(GROUP_ID, update_command)
+        result = self.light_group_app_service.get_member_by_id(GROUP_ID)
+        self.assertEqual(len(result), 2)
 
-        all_group = self.group_app_service.get_all()
-        self.assertEqual(len(all_group), 1)
+        result = self.light_group_app_service.get_by_id(GROUP_ID)
+        self.assertEqual(result.name, new_name)
 
-    def test_create_group_no_device(self):
-        with self.assertRaises(CreateGroupError):
-            command = CreateGroupCommand("group1", [])
-            self.group_app_service.create_group(command)
-
-        all_group = self.group_app_service.get_all()
-        self.assertEqual(len(all_group), 1)
-
-    def test_create_group_no_name(self):
-        with self.assertRaises(CreateGroupError):
-            command = CreateGroupCommand("", ["1", "2", "3"])
-            self.group_app_service.create_group(command)
-
-        all_group = self.group_app_service.get_all()
-        self.assertEqual(len(all_group), 1)
-
-    def test_toggle_switch_group(self):
-        all_group = self.group_app_service.get_all()
-        group_id = all_group[0].id
-        try:
-            self.group_app_service.toggle_switch(group_id)
-        except Exception as e:
-            assert False, f"{e}"
-
-    def test_toggle_switch_group(self):
-        all_group = self.group_app_service.get_all()
-        with self.assertRaises(ControlGroupError):
-            group_id = all_group[0].id + 1
-            self.group_app_service.toggle_switch(group_id)
-
-    def test_color_adjustment(self):
-        all_group = self.group_app_service.get_all()
-        group_id = all_group[0].id
-        self.group_app_service.color_adjustment(group_id, Color(255, 0, 0))
+        self.light_group_app_service.delete_group(GROUP_ID)
+        result = self.light_group_app_service.get_all()
+        self.assertEqual(len(result), 0)
 
 
 if __name__ == "__main__":

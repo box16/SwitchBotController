@@ -45,15 +45,15 @@
                       <button type="submit"> ON/OFF 切り替え </button>
                     </form>
                     <form action="{{ url_for('detail_setting', device_id=device.id) }}" method="get" style="display:inline;">
-                        <button type="submit"> 詳細設定 </button>
+                        <button type="submit"> ライト設定 </button>
                     </form>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    
-    <h1>グループ一覧</h1>
+
+    <h1>ライトグループ一覧</h1>
     <table>
         <thead>
             <tr>
@@ -62,52 +62,33 @@
             </tr>
         </thead>
         <tbody>
-            {% for group in groups %}
+            {% for light_group in light_groups %}
             <tr>
-                <td>{{ group.name }}</td>
                 <td>
-                    <form action="{{ url_for('toggle_switch_group', group_id=group.id) }}" method="post" style="display:inline;">
-                      <button type="submit"> ON/OFF 切り替え </button>
+                    {{ light_group.name }}
+                </td>
+                <td>
+                    <form action="{{ url_for('switch_on', group_id=light_group.id) }}" method="post" style="display:inline;">
+                        <button type="submit"> 一括ON </button>
                     </form>
-                    <input type="color" id="color-picker-group" value="#ff0000">
-                    <button id="submit-color-group">色切り替え</button>
-                    <script>
-                        const colorPickerGroup = document.getElementById('color-picker-group');
-                        const submitButtonGroup = document.getElementById('submit-color-group');
-            
-                        submitButtonGroup.addEventListener('click', () => {
-                            const selectedColor = colorPickerGroup.value;
-                            const rgb = hexToRgb(selectedColor);
-                
-                            fetch('/color_adjustment_group', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({group_id:"{{group.id}}",...rgb}),
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                alert(`Color submitted: R=${data.r}, G=${data.g}, B=${data.b}`);
-                            })
-                            .catch(error => console.error('Error:', error));
-                        });
-                
-                        function hexToRgb(hex) {
-                            const bigint = parseInt(hex.slice(1), 16);
-                            const r = (bigint >> 16) & 255;
-                            const g = (bigint >> 8) & 255;
-                            const b = bigint & 255;
-                            return { r, g, b };
-                        }
-                    </script>
+                    <form action="{{ url_for('switch_off', group_id=light_group.id) }}" method="post" style="display:inline;">
+                        <button type="submit"> 一括OFF </button>
+                    </form>
+                    <form action="{{ url_for('detail_setting_group', group_id=light_group.id) }}" method="get" style="display:inline;">
+                          <button type="submit"> ライト設定 </button>
+                    </form>
+                    <form action="{{ url_for('edit_group', group_id=light_group.id) }}" method="get" style="display:inline;">
+                        <button type="submit"> グループ編集 </button>
+                    </form>
+                    <form action="{{ url_for('delete_group', group_id=light_group.id) }}" method="post" style="display:inline;">
+                        <button type="submit"> グループ削除 </button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <form action="{{ url_for('create_group') }}" method="get">
+    <form action="{{ url_for('create_light_group') }}" method="get">
         <button type="submit"> グループ作成 </button>
     </form>
 

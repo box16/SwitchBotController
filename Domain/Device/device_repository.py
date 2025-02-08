@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Domain.Device.device import Device, DeviceID, DeviceName
+from Domain.Device.device import Device, DeviceID, DeviceName, DeviceType
 from typing import Tuple
 
 
@@ -18,6 +18,10 @@ class IDeviceRepository(ABC):
 
     @abstractmethod
     def get_by_id(self, device_id: DeviceID) -> Device:
+        pass
+
+    @abstractmethod
+    def get_by_type(self, type: DeviceType) -> Tuple[Device]:
         pass
 
     @abstractmethod

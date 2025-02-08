@@ -2,10 +2,17 @@ from Domain.Device.device_repository import IDeviceRepository
 from Domain.Device.device import Device, DeviceID, DeviceType, DeviceName
 from Domain.Device.light import Color, Brightness, ColorTemperature
 from Domain.api_gateway import ISwitchBotGateway
-from ApplicationService.Device.device_dto import Device as DDevice
 from ApplicationService.color_dto import Color as DColor
 from typing import Tuple, Union
 from utility.exception import DeviceNotFound
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class DtODevice:
+    id: str
+    name: str
+    type: str
 
 
 class DeviceAppService:
@@ -15,9 +22,17 @@ class DeviceAppService:
         self.device_repository = device_repository
         self.api_gateway = api_gateway
 
-    def get_all(self) -> Tuple[DDevice]:
+    def get_all(self) -> Tuple[DtODevice]:
         devices: Tuple[Device] = self.device_repository.get_all()
-        return tuple(DDevice(d.id.get(), d.name.get(), d.type.name) for d in devices)
+        return tuple(DtODevice(d.id.get(), d.name.get(), d.type.name) for d in devices)
+
+    def get_by_type(self, _type: str) -> Tuple[DtODevice]:
+        upper_type = _type.upper()
+        if not upper_type in DeviceType.__members__:
+            raise DeviceNotFound("存在しないタイプです")
+
+        result = self.device_repository.get_by_type(DeviceType[upper_type])
+        return tuple(DtODevice(r.id.get(), r.name.get(), r.type.name) for r in result)
 
     def toggle_switch(self, _device_id: Union[str, int]):
         device_id = DeviceID(_device_id)

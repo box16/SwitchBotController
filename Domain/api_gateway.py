@@ -19,3 +19,11 @@ class ISwitchBotGateway(ABC):
         self, device_id: DeviceID, brightness: Brightness, color_temp: ColorTemperature
     ):
         pass
+
+    @abstractmethod
+    def send_switch_on(self, device_id: DeviceID):
+        pass
+
+    @abstractmethod
+    def send_switch_off(self, device_id: DeviceID):
+        pass
