@@ -63,3 +63,8 @@ class TestGroupRepository(unittest.TestCase):
     def test_get_member_by_id(self):
         result = self.group_repository.get_member_by_id(GroupID(1))
         self.assertEqual((DeviceID(1), DeviceID(2), DeviceID(3)), result)
+
+    def test_delete_group(self):
+        self.group_repository.delete_group(GroupID(1))
+        result = self.group_repository.get_all()
+        self.assertEqual(0, len(result))

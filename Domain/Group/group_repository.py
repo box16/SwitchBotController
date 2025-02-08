@@ -44,3 +44,7 @@ class IGroupRepository(ABC):
     @abstractmethod
     def remove_device(self, id: GroupID, remove_devices: tuple[DeviceID]):
         pass
+
+    @abstractmethod
+    def delete_group(self, id: GroupID):
+        pass

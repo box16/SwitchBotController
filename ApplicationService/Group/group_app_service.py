@@ -133,6 +133,7 @@ class LightGroupAppService:
             self.api_gateway.send_color_control(id, color, brightness)
 
     def change_name(self, _group_id: Union[str, int], _new_name: str):
+        # TODO : change_nameはupdateに含めていいかも
         group_id = GroupID(_group_id)
         if not self.group_repository.is_exist(group_id):
             raise GroupException("存在しないグループです")
@@ -158,3 +159,6 @@ class LightGroupAppService:
         )
         if can_remove:
             self.group_repository.remove_device(group_id, remove_devices)
+
+    def delete_group(self, _group_id: Union[str, int]):
+        pass

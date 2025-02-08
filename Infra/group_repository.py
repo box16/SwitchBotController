@@ -169,3 +169,10 @@ class GroupRepository(IGroupRepository):
             result = cursor.fetchall()
         ids = tuple(DeviceID(r[0]) for r in result)
         return ids
+
+    def delete_group(self, id: GroupID):
+        with make_cursor(self.db_path) as cursor:
+            cursor.execute(
+                f"DELETE FROM {GROUP_TABLE} WHERE id=?",
+                (id.get(),),
+            )
