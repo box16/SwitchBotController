@@ -1,5 +1,5 @@
 from Domain.Device.light import Light
-from utility.exception import DeviceException
+from Domain.Device.device import Device, DeviceType
 
 
 def create_device(id: str, name: str, type: str):
@@ -7,4 +7,4 @@ def create_device(id: str, name: str, type: str):
     if is_light(type):
         return Light(id, name)
 
-    raise DeviceException(f"未対応デバイスです")
+    return Device(id, name, DeviceType.OTHER)

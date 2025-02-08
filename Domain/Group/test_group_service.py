@@ -31,12 +31,10 @@ class TestLightGroupService(unittest.TestCase):
 
     def test_create_group_with_not_light(self):
         self.device_repository.add(DeviceID(4), "Curtain", "Curtain")
-        # TODO : Light以外未対応のため暫定
-        with self.assertRaises(DeviceException):
-            result = self.light_group_service.can_create(
-                [DeviceID(1), DeviceID(2), DeviceID(3), DeviceID(4)]
-            )
-        # self.assertFalse(result)
+        result = self.light_group_service.can_create(
+            [DeviceID(1), DeviceID(2), DeviceID(3), DeviceID(4)]
+        )
+        self.assertFalse(result)
 
     def test_create_group_no_device(self):
         result = self.light_group_service.can_create([])
