@@ -4,7 +4,7 @@ from Domain.api_gateway import ISwitchBotGateway
 from Domain.Group.group import NewGroup, GroupName, GroupType, GroupID
 from Domain.Device.device import DeviceID
 from Domain.Device.light import ColorTemperature, Color, Brightness
-from ApplicationService.color_dto import Color as DtOColor
+from ApplicationService.Device.light_app_service import DtOColor
 from Domain.Device.device_repository import IDeviceRepository
 from Domain.Group.group_service import LightGroupService
 from dataclasses import dataclass

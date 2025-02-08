@@ -2,7 +2,6 @@ from flask import Flask, render_template, redirect, url_for, request
 from ApplicationService.Device.device_app_service import (
     DeviceAppService,
     DtODevice,
-    LightAppService,
 )
 from ApplicationService.Group.group_app_service import (
     LightGroupAppService,
@@ -10,7 +9,7 @@ from ApplicationService.Group.group_app_service import (
     DtOGroup,
     UpdateGroupCommand,
 )
-from ApplicationService.color_dto import Color
+from ApplicationService.Device.light_app_service import DtOColor, LightAppService
 from Infra.device_repository import DeviceRepository
 from Infra.api_gateway import SwitchBotGateway
 from Infra.group_repository import GroupRepository
@@ -79,7 +78,7 @@ def color_control(device_id):
         b = int(color_hex[5:7], 16)
     else:
         r, g, b = 255, 255, 255
-    light_app_service.color_control(device_id, Color(r, g, b), brightness)
+    light_app_service.color_control(device_id, DtOColor(r, g, b), brightness)
     return render_template("light.html", device_id=device_id)
 
 
@@ -127,7 +126,7 @@ def color_control_group(group_id):
         b = int(color_hex[5:7], 16)
     else:
         r, g, b = 255, 255, 255
-    light_group_app_service.color_control(group_id, Color(r, g, b), brightness)
+    light_group_app_service.color_control(group_id, DtOColor(r, g, b), brightness)
     return render_template("light_group.html", group_id=group_id)
 
 

@@ -2,9 +2,7 @@ import unittest
 from Domain.Device.device import DeviceID
 from ApplicationService.Device.device_app_service import (
     DeviceAppService,
-    LightAppService,
 )
-from Infra.api_gateway import FakeSwitchBotGateway
 from Infra.device_repository import DeviceRepository
 import os
 

@@ -1,11 +1,9 @@
 import unittest
 import os
 from Domain.Device.device import DeviceID
-from Domain.Group.group import GroupID
 from ApplicationService.Group.group_app_service import (
     LightGroupAppService,
     CreateGroupCommand,
-    DtOGroup,
     UpdateGroupCommand,
 )
 from Infra.device_repository import DeviceRepository
