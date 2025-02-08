@@ -161,4 +161,8 @@ class LightGroupAppService:
             self.group_repository.remove_device(group_id, remove_devices)
 
     def delete_group(self, _group_id: Union[str, int]):
-        pass
+        group_id = GroupID(_group_id)
+        if not self.group_repository.is_exist(group_id):
+            raise GroupException("存在しないグループです")
+
+        self.group_repository.delete_group(group_id)

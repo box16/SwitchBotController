@@ -51,6 +51,10 @@ class TestLightGroupAppService(unittest.TestCase):
         result = self.light_group_app_service.get_by_id(GROUP_ID)
         self.assertEqual(result.name, new_name)
 
+        self.light_group_app_service.delete_group(GROUP_ID)
+        result = self.light_group_app_service.get_all()
+        self.assertEqual(len(result), 0)
+
 
 if __name__ == "__main__":
     unittest.main()
