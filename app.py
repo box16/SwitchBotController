@@ -4,10 +4,12 @@ from ApplicationService.Device.device_app_service import (
     DtODevice,
 )
 from ApplicationService.Group.group_app_service import (
-    LightGroupAppService,
     GroupAppService,
-    CreateGroupCommand,
     DtOGroup,
+)
+from ApplicationService.Group.light_group_app_service import (
+    LightGroupAppService,
+    CreateGroupCommand,
     UpdateGroupCommand,
 )
 from ApplicationService.Device.light_app_service import DtOColor, LightAppService
