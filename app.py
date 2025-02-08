@@ -167,5 +167,11 @@ def edit_group(group_id):
         return redirect(url_for("index"))
 
 
+@app.route("/group/<group_id>/delete", methods=["POST"])
+def delete_group(group_id):
+    light_group_app_service.delete_group(group_id)
+    return redirect(url_for("index"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
